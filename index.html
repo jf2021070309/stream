@@ -61,6 +61,31 @@
             --inner-bg: rgba(255, 255, 255, 0.03);
         }
 
+        ::view-transition-group(*),
+        ::view-transition-old(*),
+        ::view-transition-new(*) {
+            animation-duration: 0.25s;
+            animation-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .rx-small-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 10;
+        }
+
+        .rx-small-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -512,55 +537,24 @@
             flex-shrink: 0;
             position: relative;
             z-index: 1;
-            background: var(--inner-bg);
-            box-shadow: 0 25px 55px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+            background: transparent;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
             transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .rx-art-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg,
-                    transparent 60%,
-                    var(--primary) 80%,
-                    var(--secondary) 100%);
-            animation: spinFrame 3s linear infinite;
-            z-index: 0;
         }
 
         .rx-art-container:hover {
             transform: scale(1.03);
         }
 
-        .rx-art-sidebar::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg,
-                    transparent 60%,
-                    rgba(237, 28, 36, 1) 80%,
-                    rgba(26, 59, 112, 1) 100%);
-            animation: spinFrame 3s linear infinite;
-            z-index: 0;
-        }
-
         .rx-art-container img,
         .rx-art-fallback {
             position: absolute !important;
-            top: 6px;
-            left: 6px;
-            width: calc(100% - 12px) !important;
-            height: calc(100% - 12px) !important;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
             object-fit: cover;
-            border-radius: 26px;
+            border-radius: 32px;
             background: #ffffff;
             z-index: 1;
         }
@@ -715,17 +709,48 @@
         .rx-viz-area {
             position: relative;
             margin: 10px 0 20px 0;
-            padding: 18px;
-            /* Modo claro: gris muy suave para que contraste con el card blanco */
+            padding: 24px;
             background: rgba(0, 0, 0, 0.04);
-            border-radius: 16px;
+            border-radius: 24px;
             box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.07);
-            /* Borde con tinte rojo sutil para destacar */
             border: 1.5px solid rgba(237, 28, 36, 0.25);
-            min-height: 140px;
+            min-height: 200px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .rx-viz-bg-anim {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(237, 28, 36, 0.15) 0%, transparent 60%);
+            animation: pulseBg 3s infinite alternate ease-in-out;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes pulseBg {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        .rx-viz-selector,
+        .rx-viz-container,
+        .rx-viz-canvas {
+            position: relative;
+            z-index: 1;
         }
 
         /* Modo oscuro: fondo oscuro que contrasta con la card semitransparente */
@@ -1266,248 +1291,6 @@
             font-size: 0.75rem;
         }
 
-        /* Premium Install Button - MUCHO MÁS LLAMATIVO */
-        .install-btn {
-            display: none;
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: linear-gradient(135deg, #ED1C24 0%, #991b1b 100%);
-            color: #ffffff;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            padding: 10px 28px 10px 10px;
-            border-radius: 100px;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 800;
-            font-size: 1rem;
-            align-items: center;
-            gap: 16px;
-            box-shadow: 0 20px 40px rgba(237, 28, 36, 0.4);
-            cursor: pointer;
-            z-index: 1000;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none;
-            overflow: hidden;
-            /* Evita que el reflejo se salga del botón */
-            animation: installWakeUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), installPulse 2s infinite;
-        }
-
-        @keyframes installWakeUp {
-            from {
-                transform: translateY(100px) scale(0.5);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-
-        @keyframes installPulse {
-            0% {
-                box-shadow: 0 10px 30px rgba(237, 28, 36, 0.5), 0 0 0 0 rgba(237, 28, 36, 0.6);
-            }
-
-            70% {
-                box-shadow: 0 15px 45px rgba(237, 28, 36, 0.3), 0 0 0 20px rgba(237, 28, 36, 0);
-            }
-
-            100% {
-                box-shadow: 0 10px 30px rgba(237, 28, 36, 0.5), 0 0 0 0 rgba(237, 28, 36, 0);
-            }
-        }
-
-        .install-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -150%;
-            width: 80%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-            transform: skewX(-25deg);
-            /* Inclinación elegante para el reflejo */
-            animation: installShine 4s infinite ease-in-out;
-            pointer-events: none;
-        }
-
-        .install-btn i {
-            background: #ffffff;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: #ED1C24;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .install-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            background: linear-gradient(135deg, #ff2e37 0%, #d4181f 100%);
-            box-shadow: 0 25px 50px rgba(237, 28, 36, 0.6);
-        }
-
-        .install-btn:hover i {
-            transform: scale(1.1);
-            /* Ya no se pone chueco, solo crece sutilmente */
-        }
-
-        .install-btn:active {
-            transform: translateY(0) scale(0.98);
-        }
-
-        @keyframes installShine {
-            0% {
-                left: -100%;
-            }
-
-            50% {
-                left: 100%;
-            }
-
-            100% {
-                left: 100%;
-            }
-        }
-
-        /* iOS Overlay */
-        .ios-install-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            /* Glass translúcido igual a la foto — NO negro sólido */
-            background: rgba(60, 60, 70, 0.45);
-            backdrop-filter: blur(18px) saturate(1.4);
-            -webkit-backdrop-filter: blur(18px) saturate(1.4);
-            z-index: 9999;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-            text-align: center;
-            animation: fadeInOverlay 0.35s ease-out;
-        }
-
-        .ios-install-card {
-            /* Blanco puro como la tarjeta iOS de la foto */
-            background: #ffffff;
-            border: none;
-            border-radius: 24px;
-            padding: 2.4rem 2rem 2rem;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
-            position: relative;
-            transform-origin: bottom center;
-        }
-
-        .ios-install-card h3 {
-            font-family: 'Inter', sans-serif;
-            font-weight: 800;
-            font-size: 1.5rem;
-            margin-bottom: 0.4rem;
-            color: #1c1c1e;
-            text-align: center;
-        }
-
-        .ios-install-card>p:first-of-type {
-            font-size: 0.92rem;
-            color: #8e8e93;
-            line-height: 1.45;
-            margin-bottom: 1.6rem;
-            font-family: 'Inter', sans-serif;
-            font-weight: 400;
-            text-align: center;
-        }
-
-        .ios-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            text-align: left;
-            margin-bottom: 1.2rem;
-        }
-
-        /* Cada paso: card gris plomito estilo iOS */
-        .ios-step {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            background: #f2f2f7;
-            padding: 12px 14px;
-            border-radius: 14px;
-            font-size: 0.9rem;
-            border: 1px solid rgba(0, 0, 0, 0.07);
-            color: #3a3a3c;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .ios-step b {
-            color: #1c1c1e;
-            font-weight: 700;
-        }
-
-        .ios-hint-note {
-            font-size: 0.78rem;
-            color: #aeaeb2;
-            text-align: center;
-            line-height: 1.5;
-            margin-bottom: 1.2rem;
-        }
-
-        .ios-close-btn {
-            background: #f2f2f7;
-            border: none;
-            color: #3a3a3c;
-            padding: 13px 24px;
-            border-radius: 14px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
-        }
-
-        .ios-close-btn:hover {
-            background: #e5e5ea;
-        }
-
-        .ios-arrow-down {
-            display: none;
-        }
-
-        @keyframes fadeInOverlay {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes bounceArrow {
-
-            0%,
-            100% {
-                transform: translate(-50%, 0);
-            }
-
-            50% {
-                transform: translate(-50%, 15px);
-            }
-        }
-
         @media (max-width: 1024px) {
             body {
                 padding: 1.5rem 1rem;
@@ -1776,103 +1559,6 @@
 <body>
     <div class="top-bg"></div>
 
-    <!-- Floating Install Button -->
-    <button id="installButton" class="install-btn">
-        <i class="fas fa-download"></i>
-        Instalar Radio Xero
-    </button>
-
-    <!-- iOS Hint Overlay -->
-    <div id="iosHint" class="ios-install-overlay">
-        <div class="ios-install-card">
-            <h3>Instala Radio Xero</h3>
-            <p>Escucha nuestra música con acceso directo desde tu celular.</p>
-
-            <div class="ios-steps">
-                <!-- Paso 1: Compartir -->
-                <div class="ios-step">
-                    <div style="display:flex; gap:8px; flex-shrink:0;">
-                        <!-- Ícono Compartir (cuadrado azul claro) -->
-                        <div
-                            style="background:#e8f0fe; color:#007AFF; width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0;">
-                            <i class="fas fa-arrow-up-from-bracket" style="font-size:0.95rem;"></i>
-                        </div>
-                        <!-- Los tres puntos (círculo gris) -->
-                        <div
-                            style="background:#e5e5ea; color:#6d6d72; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0;">
-                            <i class="fas fa-ellipsis"></i>
-                        </div>
-                    </div>
-                    <span>Toca el botón de <b>Menu</b> o <b>Compartir</b></span>
-                </div>
-
-                <!-- Paso 2: Agregar a inicio -->
-                <div class="ios-step">
-                    <!-- Ícono + (cuadrado azul claro) -->
-                    <div
-                        style="background:#e8f0fe; color:#007AFF; width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0;">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <span>Busca la opción <b>Agregar a inicio</b></span>
-                </div>
-
-                <!-- Paso 3: Agregar -->
-                <div class="ios-step">
-                    <!-- Ícono check (círculo verde) -->
-                    <div
-                        style="background:#d1fae5; color:#22c55e; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0;">
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <span>Presiona <b>Agregar</b> y la app se instalará</span>
-                </div>
-            </div>
-
-            <p class="ios-hint-note">* Recomendamos usar Safari para la mejor experiencia.</p>
-
-            <button class="ios-close-btn" onclick="document.getElementById('iosHint').style.display='none'">
-                Entendido
-            </button>
-            <i class="fas fa-arrow-down ios-arrow-down"></i>
-        </div>
-    </div>
-
-
-
-    <!-- Already Installed Modal — estilo iOS -->
-    <div id="installedModal" class="ios-install-overlay">
-        <div class="ios-install-card">
-            <!-- Ícono central verde -->
-            <div
-                style="background:#d1fae5; width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.2rem; animation: iconPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-                <i class="fas fa-check" style="color:#22c55e; font-size:1.8rem;"></i>
-            </div>
-
-            <!-- Título centrado -->
-            <h3 style="text-align:center; color:#1c1c1e; font-size:1.4rem; font-weight:800; margin-bottom:0.5rem;">¡Ya
-                está instalada!</h3>
-
-            <!-- Descripción centrada -->
-            <p style="text-align:center; color:#8e8e93; font-size:0.9rem; line-height:1.5; margin-bottom:1.5rem;">
-                Radio Xero ya está en tu pantalla de inicio. Ábrela desde ahí para disfrutar la señal sin límites.
-            </p>
-
-            <!-- Card informativa estilo iOS paso -->
-            <div class="ios-step" style="margin-bottom:1.4rem;">
-                <div
-                    style="background:#e8f0fe; color:#007AFF; width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0;">
-                    <i class="fas fa-mobile-screen-button"></i>
-                </div>
-                <span>Búscala en tu <b>pantalla de inicio</b> o menú de apps</span>
-            </div>
-
-            <p class="ios-hint-note">* Si no la encuentras, vuelve a instalarla desde tu navegador.</p>
-
-            <button class="ios-close-btn" onclick="document.getElementById('installedModal').style.display='none'">
-                Continuar Escuchando
-            </button>
-        </div>
-    </div>
-
     <style>
         @keyframes iconPop {
             0% {
@@ -1928,45 +1614,17 @@
         <!-- ─── CUSTOM PLAYER CARD (REDESIGNED) ─── -->
         <section class="card player-card">
 
-            <!-- Top: Artwork -->
-            <div class="rx-art-container">
-                <div class="rx-pulse" id="artPulse"></div>
-                <img src="icon-512.png" alt="Radio Xero"
-                    onerror="this.style.display='none';document.getElementById('artFallback').style.display='flex'">
-                <div class="rx-art-fallback" id="artFallback" style="display:none;">
-                    <svg viewBox="0 0 80 80" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="80" height="80" fill="white" />
-                        <circle cx="40" cy="40" r="30" fill="#ED1C24" />
-                        <circle cx="40" cy="40" r="22" fill="white" />
-                        <circle cx="40" cy="40" r="4" fill="#ED1C24" />
-                        <text x="40" y="36" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900"
-                            font-size="8" fill="#ED1C24">RADIO</text>
-                        <text x="40" y="48" text-anchor="middle" font-family="Arial Black,Arial" font-weight="900"
-                            font-size="12" fill="#1A3B70">XERO</text>
-                    </svg>
-                </div>
-            </div>
 
             <!-- Middle: Metadata & Visualizer -->
             <div class="rx-player-content">
-                <div class="rx-meta">
-                    <div class="rx-live-label">
-                        <span class="rx-dot" id="liveDot"></span>
-                        Estás Escuchando
-                    </div>
-
-                    <div class="rx-track" id="trackInfo">
-                        <i class="fas fa-music rx-track-icon"></i>
-                        <div class="rx-track-scroller">
-                            <div class="rx-track-content">
-                                <span id="trackText">Sintonizando señal...</span>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Top: Small Logo -->
+                <div class="rx-small-logo">
+                    <img src="icon-512.png" alt="Radio Xero">
                 </div>
 
-                <!-- Enhanced Visualizer Area -->
+                <!-- Enhanced Visualizer Area (Central Position) -->
                 <div class="rx-viz-area" id="rxVizArea">
+                    <div class="rx-viz-bg-anim"></div>
                     <div class="rx-viz-selector">
                         <button class="viz-mode-btn active" onclick="setVizMode('led')" id="btn-led">
                             <i class="fas fa-th"></i> LED
@@ -1991,6 +1649,22 @@
                     </div>
 
                     <canvas id="rxCanvas" class="rx-viz-canvas"></canvas>
+                </div>
+
+                <div class="rx-meta">
+                    <div class="rx-live-label">
+                        <span class="rx-dot" id="liveDot"></span>
+                        Estás Escuchando
+                    </div>
+
+                    <div class="rx-track" id="trackInfo">
+                        <i class="fas fa-music rx-track-icon"></i>
+                        <div class="rx-track-scroller">
+                            <div class="rx-track-content">
+                                <span id="trackText">Sintonizando señal...</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Bottom: Controls -->
@@ -2680,61 +2354,6 @@
         // Recalcular si se cambia el tamaño de la ventana (responsive)
         window.addEventListener('resize', checkTrackOverflow);
 
-        let deferredPrompt;
-        const installButton = document.getElementById('installButton');
-
-        // --- REFUERZO DE VISIBILIDAD PARA ANDROID / EDGE ---
-        function forceInstallButton() {
-            if (!isStandalone) {
-                installButton.style.display = 'flex';
-                // Aseguramos que sea visible incluso si algo intentó ocultarlo
-                installButton.setAttribute('style', 'display: flex !important;');
-            }
-        }
-
-        // Ejecutamos el refuerzo en varios puntos de carga
-        forceInstallButton();
-        window.addEventListener('load', forceInstallButton);
-        setTimeout(forceInstallButton, 1500); // Refuerzo final tras 1.5s
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            if (isIosDevice || isStandalone) return;
-            e.preventDefault();
-            deferredPrompt = e;
-            installButton.style.display = 'flex';
-        });
-
-        installButton.addEventListener('click', async () => {
-            if (isIosDevice) {
-                document.getElementById('iosHint').style.display = 'flex';
-                return;
-            }
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                await deferredPrompt.userChoice;
-                deferredPrompt = null;
-            } else if (!isStandalone) {
-                // Mostrar modal elegante si no hay prompt (ej. ya instalada)
-                document.getElementById('installedModal').style.display = 'flex';
-            }
-        });
-
-        if (isStandalone) {
-            installButton.style.display = 'none';
-        }
-
-        if (isIosDevice) {
-            const volContainer = document.querySelector('.rx-vol-container');
-            if (volContainer) volContainer.style.display = 'none';
-            const volDiv = document.querySelector('.rx-vol');
-            if (volDiv) {
-                volDiv.style.background = 'transparent';
-                volDiv.style.border = 'none';
-                volDiv.style.boxShadow = 'none';
-                volDiv.style.padding = '0';
-                volDiv.style.justifyContent = 'flex-end';
-            }
-        }
 
         function rxCopyLink(e, btn) {
             e.preventDefault();

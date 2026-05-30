@@ -1,6 +1,6 @@
 import re
 
-with open("c:/Users/jaime/Proyectos/radio-xero/stream/stream.html", "r", encoding="utf-8") as f:
+with open("c:/Users/jaime/Proyectos/stream/index.html", "r", encoding="utf-8") as f:
     content = f.read()
 
 # 1. Change main-wrapper max-width to 450px and center it
@@ -79,6 +79,6 @@ mobile_overrides = """
 """
 content = content.replace("</style>", mobile_overrides + "\n    </style>")
 
-with open("c:/Users/jaime/Proyectos/radio-xero/stream/stream.html", "w", encoding="utf-8") as f:
+with open("c:/Users/jaime/Proyectos/stream/index.html", "w", encoding="utf-8") as f:
     f.write(content)
 print("Updated CSS.")
