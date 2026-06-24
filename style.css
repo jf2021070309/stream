@@ -204,7 +204,7 @@
                 flex-direction: column !important;
                 justify-content: space-between !important;
                 border-radius: 24px !important;
-                margin-bottom: 74px !important; /* Ajustado para dar espacio al footer de TikTok sin solapar */
+                margin-bottom: 10px !important;
             }
 
             .rx-player-content {
@@ -1744,8 +1744,7 @@
 
         .main-wrapper {
             gap: 2.2rem !important;
-            padding-bottom: 120px;
-            /* Evita que el footer tape el reproductor */
+            padding-bottom: 0;
         }
 
         .rx-station-name {
