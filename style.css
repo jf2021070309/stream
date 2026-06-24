@@ -40,8 +40,8 @@
             border-radius: 20px;
             overflow: hidden;
             background: #000000;
-            box-shadow: 
-                0 0 calc(4px + var(--audio-glow, 0px)) #00f2fe, 
+            box-shadow:
+                0 0 calc(4px + var(--audio-glow, 0px)) #00f2fe,
                 0 0 calc(12px + var(--audio-glow-wide, 0px)) #fd297b;
             position: relative;
             z-index: 10;
@@ -70,20 +70,29 @@
         }
 
         @keyframes neonGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         @keyframes neonIdleGlow {
             0% {
-                box-shadow: 
-                    0 0 8px rgba(0, 242, 254, 0.6), 
+                box-shadow:
+                    0 0 8px rgba(0, 242, 254, 0.6),
                     0 0 16px rgba(253, 41, 121, 0.4);
             }
+
             100% {
-                box-shadow: 
-                    0 0 16px rgba(0, 242, 254, 0.9), 
+                box-shadow:
+                    0 0 16px rgba(0, 242, 254, 0.9),
                     0 0 30px rgba(253, 41, 121, 0.7);
             }
         }
@@ -93,9 +102,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
         }
 
         * {
@@ -198,7 +204,8 @@
                 flex-direction: column !important;
                 justify-content: space-between !important;
                 border-radius: 24px !important;
-                margin-bottom: 10px !important; /* Space for the bottom nav bar */
+                margin-bottom: 10px !important;
+                /* Space for the bottom nav bar */
             }
 
             .rx-player-content {
@@ -224,8 +231,8 @@
                 border-radius: 20px !important;
                 overflow: hidden !important;
                 background: #000000 !important;
-                box-shadow: 
-                    0 0 calc(6px + var(--audio-glow, 0px)) #00f2fe, 
+                box-shadow:
+                    0 0 calc(6px + var(--audio-glow, 0px)) #00f2fe,
                     0 0 calc(20px + var(--audio-glow-wide, 0px)) #fd297b !important;
                 position: relative !important;
                 z-index: 10 !important;
