@@ -749,6 +749,8 @@
             'avatar/video4.mp4'
         ];
         let videoQueue = [];
+        let activeVideoEl = null;
+        let hiddenVideoEl = null;
 
         function shuffleArray(array) {
             const arr = [...array];
@@ -759,32 +761,53 @@
             return arr;
         }
 
-        function playNextAvatarVideo() {
-            const videoEl = document.getElementById('avatarVideo');
-            if (!videoEl) return;
-
+        function getNextVideoSrc() {
             if (videoQueue.length === 0) {
+                const activeSrc = activeVideoEl ? activeVideoEl.getAttribute('src') : null;
                 videoQueue = shuffleArray(avatarVideos);
-                const currentSrc = videoEl.getAttribute('src');
-                if (currentSrc && videoQueue[0] === currentSrc && videoQueue.length > 1) {
+                if (activeSrc && videoQueue[0] === activeSrc && videoQueue.length > 1) {
                     [videoQueue[0], videoQueue[1]] = [videoQueue[1], videoQueue[0]];
                 }
             }
+            return videoQueue.shift();
+        }
 
-            const nextVideo = videoQueue.shift();
-            videoEl.src = nextVideo;
-            videoEl.load();
-            videoEl.play().catch(err => {
-                console.log("Auto-play de video bloqueado por políticas del navegador/interacción:", err);
+        function handleVideoEnded() {
+            const temp = activeVideoEl;
+            activeVideoEl = hiddenVideoEl;
+            hiddenVideoEl = temp;
+
+            activeVideoEl.style.display = 'block';
+            activeVideoEl.play().then(() => {
+                temp.style.display = 'none';
+                
+                const nextSrc = getNextVideoSrc();
+                temp.src = nextSrc;
+                temp.load();
+            }).catch(err => {
+                console.log("Error al reproducir siguiente video:", err);
+                temp.style.display = 'none';
             });
         }
 
-        const avatarVideoEl = document.getElementById('avatarVideo');
-        if (avatarVideoEl) {
-            avatarVideoEl.addEventListener('ended', playNextAvatarVideo);
-            // Iniciar primera reproducción
-            playNextAvatarVideo();
+        function setupAvatarVideos() {
+            activeVideoEl = document.getElementById('avatarVideo1');
+            hiddenVideoEl = document.getElementById('avatarVideo2');
+            
+            if (!activeVideoEl || !hiddenVideoEl) return;
+
+            activeVideoEl.src = getNextVideoSrc();
+            activeVideoEl.load();
+            activeVideoEl.play().catch(err => console.log("Autoplay block:", err));
+
+            hiddenVideoEl.src = getNextVideoSrc();
+            hiddenVideoEl.load();
+
+            activeVideoEl.addEventListener('ended', handleVideoEnded);
+            hiddenVideoEl.addEventListener('ended', handleVideoEnded);
         }
+
+        setupAvatarVideos();
 
         // ─── EFECTOS DE LUCES NEÓN 80s REACTIVAS A LA MÚSICA ───
         function updateNeonGlow(value) {
@@ -803,10 +826,18 @@
             if (logo) {
                 if (isPlaying) {
                     logo.classList.remove('is-paused');
+                    if (activeVideoEl) {
+                        activeVideoEl.play().catch(err => {
+                            console.log("Error al reanudar video activo:", err);
+                        });
+                    }
                 } else {
                     logo.classList.add('is-paused');
                     logo.style.setProperty('--audio-glow', '0px');
                     logo.style.setProperty('--audio-glow-wide', '0px');
+                    if (activeVideoEl) {
+                        activeVideoEl.pause();
+                    }
                 }
             }
         }
