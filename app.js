@@ -8,7 +8,7 @@ const vuL = document.getElementById('vuL');
 const vuR = document.getElementById('vuR');
 const barsL = [];
 const barsR = [];
-const SEGMENT_COUNT = 24;
+const SEGMENT_COUNT = 15;
 
 // Detección de Dispositivos y Navegadores
 const isIosDevice = /iPhone|iPad|iPod/.test(navigator.userAgent) ||
@@ -179,7 +179,8 @@ function setVizMode(mode) {
 
     // UI Update
     document.querySelectorAll('.viz-mode-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('btn-' + mode).classList.add('active');
+    const btn = document.getElementById('btn-' + mode);
+    if (btn) btn.classList.add('active');
 
     const container = document.getElementById('rxVizContainer');
     const canvasEl = document.getElementById('rxCanvas');

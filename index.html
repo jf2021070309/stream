@@ -64,32 +64,42 @@
                 <!-- Bottom Group (Visualizer, meta, controls, status) -->
                 <div class="rx-player-bottom-group">
                     <!-- Enhanced Visualizer Area (Central Position) -->
-                    <div class="rx-viz-area" id="rxVizArea">
-                        <div class="rx-viz-bg-anim"></div>
-                        <div class="rx-viz-selector">
-                            <button class="viz-mode-btn active" onclick="setVizMode('led')" id="btn-led">
-                                <i class="fas fa-th"></i> LED
-                            </button>
-                            <button class="viz-mode-btn" onclick="setVizMode('bars')" id="btn-bars">
-                                <i class="fas fa-chart-bar"></i> BARS
-                            </button>
-                            <button class="viz-mode-btn" onclick="setVizMode('wave')" id="btn-wave">
-                                <i class="fas fa-wave-square"></i> WAVE
-                            </button>
+                    <div class="rx-viz-layout-wrapper">
+                        <!-- Lateral izquierdo (Tarjeta de Regalos) -->
+                        <div class="rx-viz-side rx-viz-side-left rx-side-card">
+                            <div class="rx-side-header">Gifts</div>
+                            <div class="rx-side-body"></div>
                         </div>
 
-                        <div class="rx-viz-container" id="rxVizContainer">
-                            <div class="rx-vu-row">
-                                <span class="rx-vu-label">L</span>
-                                <div class="rx-vu-meter" id="vuL"></div>
+                        <!-- Centro: El contenedor del visualizador con bordes y fondo -->
+                        <div class="rx-viz-area" id="rxVizArea">
+                            <div class="rx-viz-bg-anim"></div>
+
+                            <div class="rx-viz-selector">
+                                <span class="rx-viz-title-badge">
+                                    <i class="fas fa-th"></i> LED
+                                </span>
                             </div>
-                            <div class="rx-vu-row">
-                                <span class="rx-vu-label">R</span>
-                                <div class="rx-vu-meter" id="vuR"></div>
+
+                            <div class="rx-viz-container" id="rxVizContainer">
+                                <div class="rx-vu-row">
+                                    <span class="rx-vu-label">L</span>
+                                    <div class="rx-vu-meter" id="vuL"></div>
+                                </div>
+                                <div class="rx-vu-row">
+                                    <span class="rx-vu-label">R</span>
+                                    <div class="rx-vu-meter" id="vuR"></div>
+                                </div>
                             </div>
+
+                            <canvas id="rxCanvas" class="rx-viz-canvas"></canvas>
                         </div>
 
-                        <canvas id="rxCanvas" class="rx-viz-canvas"></canvas>
+                        <!-- Lateral derecho (Tarjeta de 1 Moneda) -->
+                        <div class="rx-viz-side rx-viz-side-right rx-side-card">
+                            <div class="rx-side-header">1 Coins</div>
+                            <div class="rx-side-body"></div>
+                        </div>
                     </div>
 
                     <div class="rx-meta">
