@@ -1,0 +1,11 @@
+[
+  { "id": "1", "giftName": "rose", "videoUrl": "gifts/rosa.mp4", "column": "right" },
+  { "id": "2", "giftName": "rosa", "videoUrl": "gifts/rosa.mp4", "column": "right" },
+  { "id": "3", "giftName": "ice cream", "videoUrl": "gifts/helado.mp4", "column": "right" },
+  { "id": "4", "giftName": "helado", "videoUrl": "gifts/helado.mp4", "column": "right" },
+  { "id": "5", "giftName": "tiktok", "videoUrl": "gifts/tiktok.mp4", "column": "right" },
+  { "id": "6", "giftName": "heart", "videoUrl": "gifts/corazon.mp4", "column": "left" },
+  { "id": "7", "giftName": "corazon", "videoUrl": "gifts/corazon.mp4", "column": "left" },
+  { "id": "8", "giftName": "finger heart", "videoUrl": "gifts/corazon.mp4", "column": "left" },
+  { "id": "9", "giftName": "corazón", "videoUrl": "gifts/corazon.mp4", "column": "left" }
+]

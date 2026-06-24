@@ -817,3 +817,155 @@ syncLogoState();
 
 // Inicialización final
 setVizMode(currentVizMode);
+
+// ─── INTEGRACIÓN DE ALERTAS DE REGALOS EN VIVO CON TIKTOK ───
+let GIFT_VIDEO_MAP = {};
+let RIGHT_COLUMN_GIFTS = [];
+
+async function loadAlertsConfig() {
+    try {
+        const res = await fetch('/api/alerts-config');
+        if (!res.ok) throw new Error('No se pudo obtener la configuración del servidor');
+        const configData = await res.json();
+        
+        GIFT_VIDEO_MAP = {};
+        RIGHT_COLUMN_GIFTS = [];
+        
+        configData.forEach(item => {
+            const name = item.giftName.toLowerCase().trim();
+            GIFT_VIDEO_MAP[name] = item.videoUrl;
+            if (item.column === 'right') {
+                RIGHT_COLUMN_GIFTS.push(name);
+            }
+        });
+        console.log('✅ Configuración de alertas cargada dinámicamente:', GIFT_VIDEO_MAP);
+    } catch (e) {
+        console.warn('Usando configuración de alertas por defecto:', e);
+        // Configuración por defecto
+        GIFT_VIDEO_MAP = {
+            'rose': 'gifts/rosa.mp4',
+            'rosa': 'gifts/rosa.mp4',
+            'ice cream': 'gifts/helado.mp4',
+            'helado': 'gifts/helado.mp4',
+            'tiktok': 'gifts/tiktok.mp4',
+            'heart': 'gifts/corazon.mp4',
+            'corazon': 'gifts/corazon.mp4',
+            'finger heart': 'gifts/corazon.mp4',
+            'corazón': 'gifts/corazon.mp4'
+        };
+        RIGHT_COLUMN_GIFTS = ['rose', 'rosa', 'ice cream', 'helado', 'tiktok'];
+    }
+}
+
+// Cargar configuración inicialmente
+loadAlertsConfig();
+
+const giftQueue = [];
+let isProcessingGift = false;
+
+function queueGiftAlert(username, giftName) {
+    const cleanName = giftName.toLowerCase().trim();
+    const videoUrl = GIFT_VIDEO_MAP[cleanName];
+    
+    // Si no está mapeado a un video, lo ignoramos para no interrumpir
+    if (!videoUrl) {
+        console.log(`Regalo ignorado (sin video configurado): ${giftName}`);
+        return;
+    }
+
+    giftQueue.push({ username, giftName, videoUrl });
+    processNextGift();
+}
+
+function processNextGift() {
+    if (isProcessingGift || giftQueue.length === 0) return;
+
+    isProcessingGift = true;
+    const alert = giftQueue.shift();
+
+    const overlayEl = document.getElementById('liveAlertOverlay');
+    const videoEl = document.getElementById('alertOverlayVideo');
+    const textEl = document.getElementById('alertOverlayText');
+
+    if (!overlayEl || !videoEl || !textEl) {
+        isProcessingGift = false;
+        processNextGift();
+        return;
+    }
+
+    // Configurar video y mensaje
+    videoEl.src = alert.videoUrl;
+    videoEl.muted = true; // Garantizar Autoplay
+    
+    // Texto con nombre en grande y subtítulo llamativo
+    const displayGift = alert.giftName.toUpperCase();
+    textEl.innerHTML = `@${alert.username} <span>TE ENVIÓ UN REGALO: ${displayGift}!</span>`;
+
+    // Activar overlay (animación de entrada por CSS)
+    overlayEl.classList.add('active');
+
+    // Cargar y reproducir
+    videoEl.load();
+    videoEl.play().catch(e => {
+        console.warn('Fallo al reproducir video en el overlay:', e);
+        setTimeout(() => finishAlert(overlayEl, videoEl, textEl), 2000);
+    });
+
+    // Finalizar cuando acabe el video
+    videoEl.onended = () => {
+        finishAlert(overlayEl, videoEl, textEl);
+    };
+
+    // Tiempo de seguridad
+    videoEl._safetyTimeout = setTimeout(() => {
+        if (isProcessingGift && overlayEl.classList.contains('active')) {
+            finishAlert(overlayEl, videoEl, textEl);
+        }
+    }, 11000); // Límite de 11 segundos
+}
+
+function finishAlert(overlayEl, videoEl, textEl) {
+    if (videoEl._safetyTimeout) {
+        clearTimeout(videoEl._safetyTimeout);
+        videoEl._safetyTimeout = null;
+    }
+
+    // Quitar clase activa para la animación de salida
+    overlayEl.classList.remove('active');
+    
+    // Esperar a que termine la animación (400ms) para limpiar contenidos y seguir con la cola
+    setTimeout(() => {
+        videoEl.src = '';
+        textEl.innerHTML = '';
+        isProcessingGift = false;
+        processNextGift();
+    }, 450);
+}
+
+// Conectar con el servidor Socket.io local
+if (typeof io !== 'undefined') {
+    const socket = io('http://localhost:3000');
+
+    socket.on('connect', () => {
+        console.log('✅ Conectado al servidor local de alertas de TikTok');
+        showToast('🔗 Alertas de TikTok activas');
+    });
+
+    socket.on('disconnect', () => {
+        console.log('❌ Desconectado del servidor local de alertas');
+    });
+
+    socket.on('gift', (data) => {
+        queueGiftAlert(data.username, data.giftName);
+    });
+
+    socket.on('config_updated', () => {
+        console.log('🔄 Actualización de configuración recibida del servidor...');
+        loadAlertsConfig();
+    });
+
+    socket.on('server_status', (data) => {
+        console.log('Conectado a TikTok para:', data.tiktokUsername);
+    });
+}
+

@@ -32,6 +32,8 @@
     <meta property="twitter:description" content="🎧 Música sin parar 24/7 | ⚡ Dale play y súbele al volumen.">
     <meta property="twitter:image" content="https://jf2021070309.github.io/radio-xero/icon-192.png">
 
+    <!-- Socket.io Client for TikTok Live server -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -52,6 +54,12 @@
 
         <!-- ─── CUSTOM PLAYER CARD (REDESIGNED) ─── -->
         <section class="card player-card">
+            
+            <!-- TikTok Live Alert Overlay (Center screen superposition) -->
+            <div id="liveAlertOverlay" class="rx-alert-overlay">
+                <video id="alertOverlayVideo" muted playsinline></video>
+                <div id="alertOverlayText" class="rx-alert-text"></div>
+            </div>
 
 
             <!-- Middle: Metadata & Visualizer -->
@@ -68,7 +76,10 @@
                         <!-- Lateral izquierdo (Tarjeta de Regalos) -->
                         <div class="rx-viz-side rx-viz-side-left rx-side-card">
                             <div class="rx-side-header">Gifts</div>
-                            <div class="rx-side-body"></div>
+                            <div class="rx-side-body">
+                                <video id="leftGiftVideo" class="rx-side-video" muted playsinline></video>
+                                <div id="leftGiftUser" class="rx-side-username"></div>
+                            </div>
                         </div>
 
                         <!-- Centro: El contenedor del visualizador con bordes y fondo -->
@@ -98,7 +109,10 @@
                         <!-- Lateral derecho (Tarjeta de 1 Moneda) -->
                         <div class="rx-viz-side rx-viz-side-right rx-side-card">
                             <div class="rx-side-header">1 Coins</div>
-                            <div class="rx-side-body"></div>
+                            <div class="rx-side-body">
+                                <video id="rightGiftVideo" class="rx-side-video" muted playsinline></video>
+                                <div id="rightGiftUser" class="rx-side-username"></div>
+                            </div>
                         </div>
                     </div>
 
