@@ -63,12 +63,27 @@ app.get('/test-chat', (req, res) => {
 // Ruta para simular seguidor de prueba
 app.get('/test-follow', (req, res) => {
     const username = req.query.user || 'nuevo_seguidor';
+    const avatar = req.query.avatar || 'https://i.pravatar.cc/100?img=' + (Math.floor(Math.random() * 70) + 1);
     console.log(`🧪 [TEST] Simulando seguidor @${username}`);
     io.emit('follow', {
         username: username,
-        nickname: username
+        nickname: username,
+        profilePictureUrl: avatar
     });
     res.send(`Seguidor simulado: @${username}`);
+});
+
+// Ruta para simular compartir de prueba
+app.get('/test-share', (req, res) => {
+    const username = req.query.user || 'espectador_VIP';
+    const avatar = req.query.avatar || 'https://i.pravatar.cc/100?img=' + (Math.floor(Math.random() * 70) + 1);
+    console.log(`🧪 [TEST] Simulando compartir @${username}`);
+    io.emit('share', {
+        username: username,
+        nickname: username,
+        profilePictureUrl: avatar
+    });
+    res.send(`Compartir simulado: @${username}`);
 });
 
 // Ruta para obtener la configuración de alertas (CRUD - Read)
@@ -301,10 +316,17 @@ function bindConnectionEvents(connInstance) {
         const user = data.user || data;
         const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
         const nickname = user.nickname || data.nickname || username;
+        let profilePictureUrl = '';
+        if (user && user.avatarThumb && user.avatarThumb.urlList && user.avatarThumb.urlList[0]) {
+            profilePictureUrl = user.avatarThumb.urlList[0];
+        } else if (user && user.profilePictureUrl) {
+            profilePictureUrl = user.profilePictureUrl;
+        }
         console.log(`👤 [SEGUIDOR] @${username} te comenzó a seguir!`);
         io.emit('follow', {
             username: username,
-            nickname: nickname
+            nickname: nickname,
+            profilePictureUrl: profilePictureUrl
         });
     });
 
@@ -312,10 +334,17 @@ function bindConnectionEvents(connInstance) {
         const user = data.user || data;
         const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
         const nickname = user.nickname || data.nickname || username;
+        let profilePictureUrl = '';
+        if (user && user.avatarThumb && user.avatarThumb.urlList && user.avatarThumb.urlList[0]) {
+            profilePictureUrl = user.avatarThumb.urlList[0];
+        } else if (user && user.profilePictureUrl) {
+            profilePictureUrl = user.profilePictureUrl;
+        }
         console.log(`🔗 [COMPARTIDO] @${username} compartió el directo!`);
         io.emit('share', {
             username: username,
-            nickname: nickname
+            nickname: nickname,
+            profilePictureUrl: profilePictureUrl
         });
     });
 

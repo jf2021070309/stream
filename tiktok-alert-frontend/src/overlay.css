@@ -242,7 +242,7 @@
             .rx-small-logo {
                 width: 100% !important;
                 flex: 1 !important;
-                margin: 0 0 14px 0 !important;
+                margin: 0 0 6px 0 !important;
                 border-radius: 20px !important;
                 overflow: hidden !important;
                 background: #000000 !important;
@@ -256,9 +256,9 @@
             }
 
             .rx-viz-area {
-                margin: 6px 0 10px 0 !important;
-                padding: 12px !important;
-                min-height: 130px !important;
+                margin: 2px 0 4px 0 !important;
+                padding: 10px !important;
+                min-height: 120px !important;
                 border-radius: 16px !important;
             }
 
@@ -272,7 +272,7 @@
             }
 
             .rx-meta {
-                margin-bottom: 6px !important;
+                margin-bottom: 2px !important;
             }
 
             /* Optimización Reproductor Móvil */
@@ -285,8 +285,8 @@
                 justify-content: center !important;
                 font-size: 1.15rem !important;
                 /* Un poco más pequeño para que quepa todo */
-                gap: 10px !important;
-                margin-top: 4px !important;
+                gap: 8px !important;
+                margin-top: 2px !important;
             }
 
             .rx-track-scroller {
@@ -1812,6 +1812,7 @@
         .rx-controls {
             justify-content: center !important;
             gap: 1rem !important;
+            margin-top: 0.5rem !important;
         }
 
         /* Bottom Navigation Footer Estilo TikTok */

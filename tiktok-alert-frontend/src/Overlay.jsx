@@ -324,18 +324,20 @@ export default function Overlay() {
     }
   }, [])
 
+  // Double Avatar Video Swap End-Handler
   const handleAvatarVideoEnded = (vIndex) => {
-    if (avatarQueueRef.current.length === 0) {
-      avatarQueueRef.current = shuffleArray(AVATAR_VIDEOS)
-    }
+    if (!isPlaying) return
 
-    const nextSrc = avatarQueueRef.current.shift()
+    const nextIdx = Math.floor(Math.random() * AVATAR_VIDEOS.length)
+    const nextUrl = AVATAR_VIDEOS[nextIdx]
+
     const nextVideo = vIndex === 1 ? avatarVideo2Ref.current : avatarVideo1Ref.current
     const currentVideo = vIndex === 1 ? avatarVideo1Ref.current : avatarVideo2Ref.current
 
-    nextVideo.src = nextSrc
+    if (!nextVideo || !currentVideo) return
+
+    nextVideo.src = nextUrl
     nextVideo.load()
-    
     nextVideo.play().then(() => {
       setActiveAvatarIndex(vIndex === 1 ? 2 : 1)
       setTimeout(() => {
@@ -389,6 +391,30 @@ export default function Overlay() {
     processNextGift()
   }
 
+  const queueFollowAlert = (username, profilePictureUrl) => {
+    const videoUrl = '/gifts/videos/follow.mp4'
+    giftQueueRef.current.push({
+      username,
+      giftName: 'follow_event',
+      videoUrl,
+      profilePictureUrl,
+      repeatCount: 1
+    })
+    processNextGift()
+  }
+
+  const queueShareAlert = (username, profilePictureUrl) => {
+    const videoUrl = '/gifts/videos/share.mp4'
+    giftQueueRef.current.push({
+      username,
+      giftName: 'share_event',
+      videoUrl,
+      profilePictureUrl,
+      repeatCount: 1
+    })
+    processNextGift()
+  }
+
   const processNextGift = () => {
     if (isProcessingGiftRef.current || giftQueueRef.current.length === 0) return
     isProcessingGiftRef.current = true
@@ -407,8 +433,14 @@ export default function Overlay() {
     setAlertVideoSrc(alert.videoUrl)
 
     const count = alert.repeatCount || 1
-    const normalizedGiftName = alert.giftName.charAt(0).toUpperCase() + alert.giftName.slice(1)
-    setAlertMsg(`¡Muchas gracias por el regalo!<br><span>${count}x ${normalizedGiftName}</span>`)
+    if (alert.giftName === 'follow_event') {
+      setAlertMsg(`¡Muchas gracias por seguirnos!<br><span>Nuevo Seguidor</span>`)
+    } else if (alert.giftName === 'share_event') {
+      setAlertMsg(`¡Muchas gracias por compartir!<br><span>Compartió el directo</span>`)
+    } else {
+      const normalizedGiftName = alert.giftName.charAt(0).toUpperCase() + alert.giftName.slice(1)
+      setAlertMsg(`¡Muchas gracias por el regalo!<br><span>${count}x ${normalizedGiftName}</span>`)
+    }
     
     setAlertActive(true)
 
@@ -851,6 +883,23 @@ export default function Overlay() {
             </div>
 
             <div className="rx-player-bottom-group">
+              {/* Metadata block */}
+              <div className="rx-meta">
+                <div className="rx-live-label">
+                  <span className={`rx-dot ${isPlaying ? 'playing' : ''}`}></span>
+                  {statusText}
+                </div>
+
+                <div className="rx-track">
+                  <i className="fas fa-music rx-track-icon"></i>
+                  <div className="rx-track-scroller">
+                    <div className="rx-track-content">
+                      <span>{trackTitle}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Dynamic Visualizers Layout */}
               <div className="rx-viz-layout-wrapper">
                 
@@ -926,23 +975,6 @@ export default function Overlay() {
                   </div>
                 </div>
 
-              </div>
-
-              {/* Metadata block */}
-              <div className="rx-meta">
-                <div className="rx-live-label">
-                  <span className={`rx-dot ${isPlaying ? 'playing' : ''}`}></span>
-                  {statusText}
-                </div>
-
-                <div className="rx-track">
-                  <i className="fas fa-music rx-track-icon"></i>
-                  <div className="rx-track-scroller">
-                    <div className="rx-track-content">
-                      <span>{trackTitle}</span>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               {/* Audio Controls */}

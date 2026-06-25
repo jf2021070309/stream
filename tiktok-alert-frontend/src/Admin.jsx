@@ -298,6 +298,20 @@ export default function Admin() {
     }
   }
 
+  const handleSimulateShare = async () => {
+    const user = simFollowUser.trim() || 'compartir_VIP'
+    try {
+      const res = await fetch(`/test-share?user=${encodeURIComponent(user)}`)
+      if (res.ok) {
+        showToast(`Simulación de compartir enviada: @${user}`)
+      } else {
+        showToast('Error al enviar simulación de compartir', true)
+      }
+    } catch (e) {
+      showToast('Error de conexión al simular compartir', true)
+    }
+  }
+
   const handleSimulateChat = async (cmd) => {
     const comment = typeof cmd === 'string' ? cmd : simChatMessage.trim()
     if (!comment) {
@@ -637,7 +651,7 @@ export default function Admin() {
               <div className="content-card">
                 <div className="card-header-flex">
                   <h2><i className="fa-solid fa-share-nodes"></i> Configuración de Compartir (Shares)</h2>
-                  <button className="btn btn-accent" onClick={() => handleSimulateChat('!color celeste')} style={{ fontSize: '0.8rem', height: '32px' }}>
+                  <button className="btn btn-accent" onClick={handleSimulateShare} style={{ fontSize: '0.8rem', height: '32px' }}>
                     <i className="fa-solid fa-play"></i> Probar
                   </button>
                 </div>
