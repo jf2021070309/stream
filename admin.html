@@ -598,7 +598,15 @@
                 <label for="editVideoUrl">Ruta de Video Estático</label>
                 <div class="input-group">
                     <i class="fa-solid fa-file-video"></i>
-                    <input type="text" id="editVideoUrl" placeholder="Ej. gifts/rosa.mp4">
+                    <input type="text" id="editVideoUrl" placeholder="Ej. gifts/videos/rosa.mp4">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="editImageUrl">Ruta de Imagen / Icono (Opcional)</label>
+                <div class="input-group">
+                    <i class="fa-solid fa-image"></i>
+                    <input type="text" id="editImageUrl" placeholder="Ej. gifts/img/rose.webp">
                 </div>
             </div>
 
@@ -636,6 +644,7 @@
         const editId = document.getElementById('editId');
         const editGiftName = document.getElementById('editGiftName');
         const editVideoUrl = document.getElementById('editVideoUrl');
+        const editImageUrl = document.getElementById('editImageUrl');
 
         // Toast Elementos
         const toastBox = document.getElementById('toastBox');
@@ -692,10 +701,38 @@
             currentAlerts.forEach((item, index) => {
                 const tr = document.createElement('tr');
 
+                // Resolver URL de imagen
+                let imgHtml = '';
+                if (item.imageUrl) {
+                    imgHtml = `<img src="${item.imageUrl}" style="width: 36px; height: 36px; object-fit: contain; border-radius: 8px; background-color: rgba(255,255,255,0.05); padding: 4px; border: 1px solid rgba(255,255,255,0.1);" alt="${item.giftName}">`;
+                } else {
+                    const normalized = item.giftName.toLowerCase().trim();
+                    let filename = '';
+                    if (normalized === 'rose') filename = 'rose.webp';
+                    else if (normalized === 'ice cream cone') filename = 'Ice Cream Cone.webp';
+                    else if (normalized === 'tiktok') filename = 'TikTok.webp';
+                    else if (normalized === 'wink wink') filename = 'Wink wink.webp';
+                    else if (normalized === 'glow stick') filename = 'Glow Stick.webp';
+                    else if (normalized === 'pop') filename = 'Pop.webp';
+                    else if (normalized === 'oldies') filename = 'Oldies.webp';
+                    else if (normalized === 'love you so much') filename = 'Love you so much.webp';
+                    
+                    if (filename) {
+                        imgHtml = `<img src="gifts/img/${filename}" style="width: 36px; height: 36px; object-fit: contain; border-radius: 8px; background-color: rgba(255,255,255,0.05); padding: 4px; border: 1px solid rgba(255,255,255,0.1);" alt="${item.giftName}">`;
+                    } else {
+                        imgHtml = `<div style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background-color: rgba(255,255,255,0.05); border-radius: 8px; color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-gift"></i></div>`;
+                    }
+                }
+
                 tr.innerHTML = `
-                    <td style="font-weight: 600;">${item.giftName}</td>
-                    <td style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem;">${item.videoUrl}</td>
-                    <td class="actions-cell">
+                    <td style="vertical-align: middle;">
+                        <div style="display: flex; align-items: center; gap: 0.85rem;">
+                            ${imgHtml}
+                            <span style="font-weight: 600; text-transform: capitalize;">${item.giftName}</span>
+                        </div>
+                    </td>
+                    <td style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem; vertical-align: middle;">${item.videoUrl}</td>
+                    <td class="actions-cell" style="vertical-align: middle;">
                         <button class="btn btn-secondary btn-mini" onclick="simulateRow(${index})">
                             <i class="fa-solid fa-play"></i> Simular
                         </button>
@@ -739,13 +776,15 @@
                 modalTitle.innerText = 'Añadir Nuevo Regalo';
                 editId.value = '';
                 editGiftName.value = '';
-                editVideoUrl.value = 'gifts/';
+                editVideoUrl.value = 'gifts/videos/';
+                editImageUrl.value = 'gifts/img/';
             } else {
                 const item = currentAlerts[index];
                 modalTitle.innerText = 'Editar Mapeo';
                 editId.value = item.id || '';
                 editGiftName.value = item.giftName;
-                editVideoUrl.value = item.videoUrl;
+                editVideoUrl.value = item.videoUrl || '';
+                editImageUrl.value = item.imageUrl || '';
             }
             editModalOverlay.classList.add('active');
         }
@@ -758,6 +797,7 @@
         document.getElementById('saveModalBtn').addEventListener('click', () => {
             const gift = editGiftName.value.trim().toLowerCase();
             const video = editVideoUrl.value.trim();
+            const image = editImageUrl.value.trim();
 
             if (!gift || !video) {
                 showToast('Por favor completa todos los campos', true);
@@ -767,11 +807,12 @@
             if (editingIndex === -1) {
                 // Nuevo
                 const newId = String(Date.now());
-                currentAlerts.push({ id: newId, giftName: gift, videoUrl: video });
+                currentAlerts.push({ id: newId, giftName: gift, videoUrl: video, imageUrl: image });
             } else {
                 // Editando
                 currentAlerts[editingIndex].giftName = gift;
                 currentAlerts[editingIndex].videoUrl = video;
+                currentAlerts[editingIndex].imageUrl = image;
             }
 
             renderTable();

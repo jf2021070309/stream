@@ -869,14 +869,14 @@ async function loadAlertsConfig() {
         console.warn('Usando configuración de alertas por defecto:', e);
         // Configuración por defecto
         GIFT_VIDEO_MAP = {
-            'rose': 'gifts/rosa.mp4',
-            'ice cream cone': 'gifts/helado.mp4',
-            'tiktok': 'gifts/tiktok.mp4',
-            'wink wink': 'gifts/pop.mp4',
-            'glow stick': 'gifts/pop.mp4',
-            'pop': 'gifts/pop.mp4',
-            'oldies': 'gifts/pop.mp4',
-            'love you so much': 'gifts/corazon.mp4'
+            'rose': 'gifts/videos/rosa.mp4',
+            'ice cream cone': 'gifts/videos/helado.mp4',
+            'tiktok': 'gifts/videos/tiktok.mp4',
+            'wink wink': 'gifts/videos/pop.mp4',
+            'glow stick': 'gifts/videos/pop.mp4',
+            'pop': 'gifts/videos/pop.mp4',
+            'oldies': 'gifts/videos/pop.mp4',
+            'love you so much': 'gifts/videos/corazon.mp4'
         };
     }
 }
