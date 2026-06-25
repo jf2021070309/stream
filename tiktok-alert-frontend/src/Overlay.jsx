@@ -49,6 +49,7 @@ export default function Overlay() {
   // Top Donator State
   const [donorTotals, setDonorTotals] = useState({})
   const [topDonor, setTopDonor] = useState({ username: '', coins: 0 })
+  const topDonorRef = useRef({ username: '', coins: 0 })
 
   // Active Gift State
   const [currentGift, setCurrentGift] = useState({ username: '', giftName: '', videoUrl: '' })
@@ -79,6 +80,7 @@ export default function Overlay() {
   const giftQueueRef = useRef([])
   const isProcessingGiftRef = useRef(false)
   const alertTimeoutRef = useRef(null)
+  const activeAlertRef = useRef(null)
 
   // Alerts configuration mapping
   const giftVideoMapRef = useRef({
@@ -214,8 +216,9 @@ export default function Overlay() {
         const newTotals = { ...prev }
         newTotals[data.username] = (newTotals[data.username] || 0) + coins
 
-        if (newTotals[data.username] > topDonor.coins) {
+        if (newTotals[data.username] > topDonorRef.current.coins) {
           const newTop = { username: data.username, coins: newTotals[data.username] }
+          topDonorRef.current = newTop
           setTopDonor(newTop)
           setTickerTopUser(`@${data.username} (${newTotals[data.username]} 🪙)`)
         }
@@ -239,7 +242,7 @@ export default function Overlay() {
     return () => {
       socket.disconnect()
     }
-  }, [topDonor])
+  }, [])
 
   // Handle live chat commands (changing theme colors, visualizers, styles)
   const handleChatCommand = (username, comment) => {
@@ -350,7 +353,39 @@ export default function Overlay() {
     const videoUrl = giftVideoMapRef.current[cleanName]
     if (!videoUrl) return
 
-    giftQueueRef.current.push({ username, giftName, videoUrl, profilePictureUrl, repeatCount })
+    // 1. Check if same user is currently streaking the same gift on screen
+    if (activeAlertRef.current && 
+        activeAlertRef.current.username === username && 
+        activeAlertRef.current.giftName.toLowerCase().trim() === cleanName) {
+      
+      const newCount = Math.max(activeAlertRef.current.repeatCount, repeatCount)
+      activeAlertRef.current.repeatCount = newCount
+      const normalizedGiftName = giftName.charAt(0).toUpperCase() + giftName.slice(1)
+      setAlertMsg(`¡Muchas gracias por el regalo!<br><span>${newCount}x ${normalizedGiftName}</span>`)
+      
+      // Reset timeout so user sees updated total before it fades
+      if (alertTimeoutRef.current) {
+        clearTimeout(alertTimeoutRef.current)
+        alertTimeoutRef.current = setTimeout(() => {
+          finishAlert()
+        }, 8000)
+      }
+      return
+    }
+
+    // 2. Check if the gift event is already queued to update its count
+    const existingIndex = giftQueueRef.current.findIndex(
+      item => item.username === username && item.giftName.toLowerCase().trim() === cleanName
+    )
+
+    if (existingIndex !== -1) {
+      if (repeatCount > giftQueueRef.current[existingIndex].repeatCount) {
+        giftQueueRef.current[existingIndex].repeatCount = repeatCount
+      }
+    } else {
+      giftQueueRef.current.push({ username, giftName, videoUrl, profilePictureUrl, repeatCount })
+    }
+    
     processNextGift()
   }
 
@@ -360,6 +395,13 @@ export default function Overlay() {
 
     const alert = giftQueueRef.current.shift()
     
+    // Store current active alert reference for dynamic combo updating
+    activeAlertRef.current = {
+      username: alert.username,
+      giftName: alert.giftName,
+      repeatCount: alert.repeatCount
+    }
+
     setAlertUser(`@${alert.username}`)
     setAlertAvatar(alert.profilePictureUrl || DEFAULT_AVATAR)
     setAlertVideoSrc(alert.videoUrl)
@@ -381,7 +423,7 @@ export default function Overlay() {
 
     alertTimeoutRef.current = setTimeout(() => {
       finishAlert()
-    }, 11000)
+    }, 8000)
   }
 
   const finishAlert = () => {
@@ -391,6 +433,7 @@ export default function Overlay() {
     }
 
     setAlertActive(false)
+    activeAlertRef.current = null
 
     setTimeout(() => {
       if (alertVideoRef.current) alertVideoRef.current.src = ''
@@ -740,7 +783,7 @@ export default function Overlay() {
       <div className="top-bg"></div>
 
       <header>
-        <h1 className="visually-hidden">Radio Xero</h1>
+        <h1 className="visually-hidden">TikXero</h1>
         <div className="theme-switch" id="themeToggle" onClick={() => setIsDarkTheme(!isDarkTheme)} aria-label="Cambiar tema">
           <div className="switch-knob" style={{ transform: isDarkTheme ? 'translateX(28px)' : 'translateX(0)' }}>
             <i className={`fas ${isDarkTheme ? 'fa-moon' : 'fa-sun'}`}></i>

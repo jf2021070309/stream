@@ -1,7 +1,7 @@
         :root {
-            --primary: #ED1C24;
-            --secondary: #1A3B70;
-            --primary-glow: rgba(237, 28, 36, 0.3);
+            --primary: #00E5FF;
+            --secondary: #7C4DFF;
+            --primary-glow: rgba(0, 229, 255, 0.3);
             --bg-main: #f1f5f9;
             --text-main: #0f172a;
             --text-dim: #64748b;
@@ -15,13 +15,13 @@
         }
 
         .dark-theme {
-            --bg-main: #020617;
+            --bg-main: #0B0E11;
             --text-main: #ffffff;
             --text-dim: #94a3b8;
-            --card-bg: rgba(15, 23, 42, 0.6);
+            --card-bg: rgba(11, 14, 17, 0.6);
             --card-border: rgba(255, 255, 255, 0.08);
-            --glass: rgba(15, 23, 42, 0.7);
-            --glass-border: rgba(237, 28, 36, 0.2);
+            --glass: rgba(11, 14, 17, 0.7);
+            --glass-border: rgba(0, 229, 255, 0.2);
             --shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
             --inner-bg: rgba(255, 255, 255, 0.03);
         }
@@ -41,8 +41,8 @@
             overflow: hidden;
             background: #000000;
             box-shadow:
-                0 0 calc(4px + var(--audio-glow, 0px)) #00f2fe,
-                0 0 calc(12px + var(--audio-glow-wide, 0px)) #fd297b;
+                0 0 calc(4px + var(--audio-glow, 0px)) #00E5FF,
+                0 0 calc(12px + var(--audio-glow-wide, 0px)) #FE2C55;
             position: relative;
             z-index: 10;
             transition: box-shadow 0.08s ease;
@@ -55,7 +55,7 @@
             left: -2px;
             right: -2px;
             bottom: -2px;
-            background: linear-gradient(45deg, #00f2fe, #fd297b, #ff007f, #00f2fe);
+            background: linear-gradient(45deg, #00E5FF, #FE2C55, #7C4DFF, #00E5FF);
             background-size: 300% 300%;
             z-index: -1;
             border-radius: 22px;
@@ -86,14 +86,14 @@
         @keyframes neonIdleGlow {
             0% {
                 box-shadow:
-                    0 0 8px rgba(0, 242, 254, 0.6),
-                    0 0 16px rgba(253, 41, 121, 0.4);
+                    0 0 8px rgba(0, 229, 255, 0.6),
+                    0 0 16px rgba(254, 44, 85, 0.4);
             }
 
             100% {
                 box-shadow:
-                    0 0 16px rgba(0, 242, 254, 0.9),
-                    0 0 30px rgba(253, 41, 121, 0.7);
+                    0 0 16px rgba(0, 229, 255, 0.9),
+                    0 0 30px rgba(254, 44, 85, 0.7);
             }
         }
 
@@ -147,8 +147,8 @@
             left: 0;
             width: 100%;
             height: 380px;
-            /* Degradado ajustado: Predomina el Guinda del lado derecho */
-            background: linear-gradient(110deg, #020617 0%, #0f172a 35%, #991b1b 85%, #b3141a 100%);
+            /* Degradado ajustado: Predomina el nuevo color neutro y los acentos TikXero */
+            background: linear-gradient(110deg, #0B0E11 0%, #11151A 35%, #7C4DFF 85%, #00E5FF 100%);
             z-index: 0;
             clip-path: ellipse(150% 100% at 50% 0%);
             /* Curva elegante en la transición */

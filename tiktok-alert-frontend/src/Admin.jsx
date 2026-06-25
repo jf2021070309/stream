@@ -349,7 +349,7 @@ export default function Admin() {
             <i className="fa-brands fa-tiktok"></i>
           </div>
           <div className="logo-text">
-            <h1>TikPop</h1>
+            <h1>TikXero</h1>
             <p>Panel de Control</p>
           </div>
         </div>
