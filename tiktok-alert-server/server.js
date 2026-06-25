@@ -120,7 +120,7 @@ if (tiktokConnector.TikTokLiveConnection) {
     process.exit(1);
 }
 
-let connection = new TikTokLiveConnectionClass(tiktokUsername, { enableExtendedGiftInfo: true });
+let connection = new TikTokLiveConnectionClass(tiktokUsername, { enableExtendedGiftInfo: false });
 let isConnectedToTikTok = false;
 
 // Conectar a la transmisión de TikTok
@@ -162,7 +162,7 @@ function reconnectTikTok(newUsername) {
     }
     
     tiktokUsername = newUsername;
-    connection = new TikTokLiveConnectionClass(newUsername, { enableExtendedGiftInfo: true });
+    connection = new TikTokLiveConnectionClass(newUsername, { enableExtendedGiftInfo: false });
     bindConnectionEvents();
     connectToTikTok();
 }
