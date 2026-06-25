@@ -760,31 +760,62 @@ function shuffleArray(array) {
     return arr;
 }
 
+let currentActiveVideo = 1;
+
 function playNextAvatarVideo() {
-    const videoEl = document.getElementById('avatarVideo');
-    if (!videoEl) return;
+    const video1 = document.getElementById('avatarVideo1');
+    const video2 = document.getElementById('avatarVideo2');
+    if (!video1 || !video2) return;
+
+    const activeVideo = currentActiveVideo === 1 ? video1 : video2;
+    const nextVideoEl = currentActiveVideo === 1 ? video2 : video1;
 
     if (videoQueue.length === 0) {
         videoQueue = shuffleArray(avatarVideos);
-        const currentSrc = videoEl.getAttribute('src');
+        const currentSrc = activeVideo.getAttribute('src');
         if (currentSrc && videoQueue[0] === currentSrc && videoQueue.length > 1) {
             [videoQueue[0], videoQueue[1]] = [videoQueue[1], videoQueue[0]];
         }
     }
 
-    const nextVideo = videoQueue.shift();
-    videoEl.src = nextVideo;
-    videoEl.load();
-    videoEl.play().catch(err => {
-        console.log("Auto-play de video bloqueado por políticas del navegador/interacción:", err);
-    });
+    const nextSrc = videoQueue.shift();
+    nextVideoEl.src = nextSrc;
+    nextVideoEl.load();
+
+    nextVideoEl.oncanplay = () => {
+        nextVideoEl.oncanplay = null;
+        nextVideoEl.play().then(() => {
+            activeVideo.classList.remove('active');
+            nextVideoEl.classList.add('active');
+            currentActiveVideo = currentActiveVideo === 1 ? 2 : 1;
+
+            setTimeout(() => {
+                activeVideo.pause();
+            }, 550);
+        }).catch(err => {
+            console.log("Fallo al reproducir video en segundo plano:", err);
+            activeVideo.classList.remove('active');
+            nextVideoEl.classList.add('active');
+            currentActiveVideo = currentActiveVideo === 1 ? 2 : 1;
+        });
+    };
 }
 
-const avatarVideoEl = document.getElementById('avatarVideo');
-if (avatarVideoEl) {
-    avatarVideoEl.addEventListener('ended', playNextAvatarVideo);
-    // Iniciar primera reproducción
-    playNextAvatarVideo();
+const v1 = document.getElementById('avatarVideo1');
+const v2 = document.getElementById('avatarVideo2');
+if (v1 && v2) {
+    v1.addEventListener('ended', playNextAvatarVideo);
+    v2.addEventListener('ended', playNextAvatarVideo);
+    
+    if (videoQueue.length === 0) {
+        videoQueue = shuffleArray(avatarVideos);
+    }
+    const firstSrc = videoQueue.shift();
+    v1.src = firstSrc;
+    v1.load();
+    v1.play().catch(err => {
+        console.log("Auto-play de primer video bloqueado:", err);
+    });
 }
 
 // ─── EFECTOS DE LUCES NEÓN 80s REACTIVAS A LA MÚSICA ───
