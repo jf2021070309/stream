@@ -529,6 +529,14 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label for="simGiftCount">Cantidad (Multiplicador)</label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-hashtag"></i>
+                            <input type="number" id="simGiftCount" value="1" min="1" max="999">
+                        </div>
+                    </div>
+
                     <button class="btn btn-accent btn-full" id="simulateAlertBtn">
                         <i class="fa-solid fa-paper-plane"></i> Lanzar Alerta
                     </button>
@@ -844,25 +852,31 @@
         function simulateRow(index) {
             const item = currentAlerts[index];
             const testUser = document.getElementById('simUserField').value.trim() || 'espectador_VIP';
-            triggerSimulation(item.giftName, testUser);
+            const count = parseInt(document.getElementById('simGiftCount').value) || 1;
+            triggerSimulation(item.giftName, testUser, count);
         }
 
         // Simular regalo desde Sidebar
         document.getElementById('simulateAlertBtn').addEventListener('click', () => {
             const giftName = simGiftSelect.value;
             const testUser = document.getElementById('simUserField').value.trim() || 'espectador_VIP';
+            const count = parseInt(document.getElementById('simGiftCount').value) || 1;
             if (!giftName) {
                 showToast('No hay regalos mapeados para simular.', true);
                 return;
             }
-            triggerSimulation(giftName, testUser);
+            triggerSimulation(giftName, testUser, count);
         });
 
-        async function triggerSimulation(giftName, user) {
+        async function triggerSimulation(giftName, user, count = 1) {
             try {
-                const res = await fetch(`/test-gift?name=${encodeURIComponent(giftName)}&user=${encodeURIComponent(user)}`);
+                // Generar un ID de foto aleatorio del 1 al 70 para variar las fotos de perfil en el test
+                const randImgId = Math.floor(Math.random() * 70) + 1;
+                const avatarUrl = `https://i.pravatar.cc/100?img=${randImgId}`;
+                
+                const res = await fetch(`/test-gift?name=${encodeURIComponent(giftName)}&user=${encodeURIComponent(user)}&count=${count}&avatar=${encodeURIComponent(avatarUrl)}`);
                 if (res.ok) {
-                    showToast(`Simulación enviada: Regalo "${giftName}" por @${user}`);
+                    showToast(`Simulación enviada: ${count}x "${giftName}" por @${user}`);
                 } else {
                     showToast('Error al enviar simulación', true);
                 }

@@ -887,7 +887,9 @@ loadAlertsConfig();
 const giftQueue = [];
 let isProcessingGift = false;
 
-function queueGiftAlert(username, giftName) {
+const defaultAvatar = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23cccccc"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>';
+
+function queueGiftAlert(username, giftName, profilePictureUrl, repeatCount) {
     const cleanName = giftName.toLowerCase().trim();
     const videoUrl = GIFT_VIDEO_MAP[cleanName];
     
@@ -897,7 +899,7 @@ function queueGiftAlert(username, giftName) {
         return;
     }
 
-    giftQueue.push({ username, giftName, videoUrl });
+    giftQueue.push({ username, giftName, videoUrl, profilePictureUrl, repeatCount });
     processNextGift();
 }
 
@@ -910,20 +912,47 @@ function processNextGift() {
     const overlayEl = document.getElementById('liveAlertOverlay');
     const videoEl = document.getElementById('alertOverlayVideo');
     const textEl = document.getElementById('alertOverlayText');
+    const avatarEl = document.getElementById('alertOverlayAvatar');
+    const userEl = document.getElementById('alertOverlayUser');
+    const msgEl = document.getElementById('alertOverlayMsg');
 
-    if (!overlayEl || !videoEl || !textEl) {
+    if (!overlayEl || !videoEl) {
         isProcessingGift = false;
         processNextGift();
         return;
     }
 
-    // Configurar video y mensaje
+    // Configurar video
     videoEl.src = alert.videoUrl;
     videoEl.muted = true; // Garantizar Autoplay
     
-    // Texto con nombre en grande y subtítulo llamativo
-    const displayGift = alert.giftName.toUpperCase();
-    textEl.innerHTML = `@${alert.username} <span>TE ENVIÓ UN REGALO: ${displayGift}!</span>`;
+    // Configurar foto de perfil
+    if (avatarEl) {
+        avatarEl.src = alert.profilePictureUrl || defaultAvatar;
+        // Si la imagen falla en cargar, poner el default avatar
+        avatarEl.onerror = () => {
+            avatarEl.src = defaultAvatar;
+            avatarEl.onerror = null;
+        };
+    }
+    
+    // Configurar nombre de usuario
+    if (userEl) {
+        userEl.textContent = `@${alert.username}`;
+    }
+    
+    // Configurar mensaje de agradecimiento interactivo
+    if (msgEl) {
+        const count = alert.repeatCount || 1;
+        const normalizedGiftName = alert.giftName.charAt(0).toUpperCase() + alert.giftName.slice(1);
+        msgEl.innerHTML = `¡Muchas gracias por el regalo!<br><span>${count}x ${normalizedGiftName}</span>`;
+    }
+    
+    // Texto de respaldo clásico
+    if (textEl) {
+        const displayGift = alert.giftName.toUpperCase();
+        textEl.innerHTML = `@${alert.username} <span>TE ENVIÓ UN REGALO: ${displayGift}!</span>`;
+    }
 
     // Activar overlay (animación de entrada por CSS)
     overlayEl.classList.add('active');
@@ -980,7 +1009,7 @@ if (typeof io !== 'undefined') {
     });
 
     socket.on('gift', (data) => {
-        queueGiftAlert(data.username, data.giftName);
+        queueGiftAlert(data.username, data.giftName, data.profilePictureUrl, data.repeatCount);
     });
 
     socket.on('config_updated', () => {

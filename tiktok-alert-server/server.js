@@ -23,22 +23,25 @@ app.use(express.json());
 // Servir archivos estáticos del reproductor si se decide usar localmente
 app.use(express.static(path.join(__dirname, '../')));
 
-// Ruta para simular regalos de prueba (Rosa, Helado, Tiktok, Corazón)
+// Ruta para simular regalos de prueba
 app.get('/test-gift', (req, res) => {
     const giftName = req.query.name || 'rosa';
     const username = req.query.user || 'usuario_demo';
+    const repeatCount = parseInt(req.query.count) || 1;
+    const profilePictureUrl = req.query.avatar || 'https://i.pravatar.cc/100?img=33';
     
-    console.log(`🧪 [TEST] Simulando regalo "${giftName}" enviado por @${username}`);
+    console.log(`🧪 [TEST] Simulando regalo "${giftName}" x${repeatCount} enviado por @${username}`);
     io.emit('gift', {
         username: username,
         nickname: username,
+        profilePictureUrl: profilePictureUrl,
         giftName: giftName,
         giftId: 1000,
-        repeatCount: 1,
+        repeatCount: repeatCount,
         timestamp: Date.now()
     });
     
-    res.send(`Alerta de regalo simulada con éxito. Tipo: "${giftName}", Usuario: @${username}`);
+    res.send(`Alerta de regalo simulada con éxito. Tipo: "${giftName}", Usuario: @${username}, Cantidad: ${repeatCount}`);
 });
 
 // Ruta para obtener la configuración de alertas (CRUD - Read)

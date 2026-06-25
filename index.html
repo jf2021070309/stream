@@ -57,8 +57,17 @@
             
             <!-- TikTok Live Alert Overlay (Center screen superposition) -->
             <div id="liveAlertOverlay" class="rx-alert-overlay">
-                <video id="alertOverlayVideo" muted playsinline></video>
-                <div id="alertOverlayText" class="rx-alert-text"></div>
+                <div class="rx-alert-video-container">
+                    <video id="alertOverlayVideo" muted playsinline></video>
+                    
+                    <!-- Capa de información interactiva encima del video -->
+                    <div id="alertOverlayInfo" class="rx-alert-info-layer">
+                        <img id="alertOverlayAvatar" class="rx-alert-avatar" src="" alt="Avatar">
+                        <div id="alertOverlayUser" class="rx-alert-username"></div>
+                        <div id="alertOverlayMsg" class="rx-alert-message"></div>
+                    </div>
+                </div>
+                <div id="alertOverlayText" class="rx-alert-text" style="display: none;"></div>
             </div>
 
 

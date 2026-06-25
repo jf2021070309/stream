@@ -1950,22 +1950,120 @@
             pointer-events: all;
         }
 
-        .rx-alert-overlay video {
+        /* Contenedor del video y texto para animar juntos */
+        .rx-alert-video-container {
+            position: relative;
             width: 90%;
             max-width: 340px;
             height: auto;
             max-height: 75%;
-            object-fit: contain;
             border-radius: 12px;
+            overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.2);
             transform: scale(0.6) rotate(-3deg);
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             opacity: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .rx-alert-overlay.active video {
+        .rx-alert-overlay.active .rx-alert-video-container {
             transform: scale(1) rotate(0deg);
             opacity: 1;
+        }
+
+        .rx-alert-overlay video {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        /* Capa interactiva encima del video */
+        .rx-alert-info-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.25); /* Sutil filtro oscuro sobre el video para lectura */
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Foto del usuario */
+        .rx-alert-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), 0 4px 10px rgba(0, 0, 0, 0.5);
+            object-fit: cover;
+            margin-bottom: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.15s;
+        }
+
+        .rx-alert-overlay.active .rx-alert-avatar {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Nombre del usuario */
+        .rx-alert-username {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #00f0ff; /* Color cyan interactivo */
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(0,240,255,0.6);
+            margin-bottom: 8px;
+            transform: translateY(10px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.25s;
+            word-break: break-all;
+            max-width: 100%;
+        }
+
+        .rx-alert-overlay.active .rx-alert-username {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Mensaje de agradecimiento */
+        .rx-alert-message {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 0 8px rgba(255,255,255,0.4);
+            transform: translateY(10px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.35s;
+            max-width: 100%;
+        }
+
+        .rx-alert-overlay.active .rx-alert-message {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .rx-alert-message span {
+            color: #ff0050; /* Color rosa TikTok */
+            font-size: 1.25rem;
+            display: block;
+            margin-top: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(255,0,80,0.6);
         }
 
         .rx-alert-text {
