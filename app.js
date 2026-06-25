@@ -57,7 +57,7 @@ function rxSetVol(v) {
     audio.volume = v / 100;
     const slider = document.getElementById('volSlider');
     const volValue = document.getElementById('volValue');
-    slider.style.background = `linear-gradient(to right, #ED1C24 ${v}%, rgba(237, 28, 36, 0.2) ${v}%)`;
+    slider.style.background = `linear-gradient(to right, var(--primary) ${v}%, var(--primary-glow) ${v}%)`;
     volValue.textContent = v + '%';
 
     if (v > 0 && audio.muted) {
@@ -666,35 +666,40 @@ function updateShareLinks() {
 }
 
 // --- THEME MANAGEMENT ---
-function rxToggleTheme() {
-    const body = document.body;
+function updateThemeIconsAndMeta(isDark) {
     const themeToggle = document.getElementById('themeToggle');
+    if (!themeToggle) return;
     const icon = themeToggle.querySelector('i');
     const metaTheme = document.querySelector('meta[name="theme-color"]');
-
-    body.classList.toggle('dark-theme');
-    const isDark = body.classList.contains('dark-theme');
-
-    localStorage.setItem('rx-theme', isDark ? 'dark' : 'light');
-
+    
     if (isDark) {
         icon.className = 'fas fa-moon';
-        metaTheme.setAttribute('content', '#020617');
+        if (metaTheme) metaTheme.setAttribute('content', '#020617');
     } else {
         icon.className = 'fas fa-sun';
-        metaTheme.setAttribute('content', '#f1f5f9');
+        if (metaTheme) metaTheme.setAttribute('content', '#f1f5f9');
     }
+}
+
+function rxToggleTheme() {
+    const body = document.body;
+    body.classList.toggle('dark-theme');
+    const isDark = body.classList.contains('dark-theme');
+    localStorage.setItem('rx-theme', isDark ? 'dark' : 'light');
+    updateThemeIconsAndMeta(isDark);
 }
 
 function initTheme() {
     const savedTheme = localStorage.getItem('rx-theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
 
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+    if (isDark) {
         document.body.classList.add('dark-theme');
-        document.getElementById('themeToggle').querySelector('i').className = 'fas fa-moon';
-        document.querySelector('meta[name="theme-color"]').setAttribute('content', '#020617');
+    } else {
+        document.body.classList.remove('dark-theme');
     }
+    updateThemeIconsAndMeta(isDark);
 }
 
 window.addEventListener('load', () => {
@@ -1010,6 +1015,39 @@ if (typeof io !== 'undefined') {
 
     socket.on('gift', (data) => {
         queueGiftAlert(data.username, data.giftName, data.profilePictureUrl, data.repeatCount);
+        
+        // Actualizar ticker de último regalo
+        const tickerGiftUser = document.getElementById('tickerGiftUser');
+        if (tickerGiftUser) {
+            tickerGiftUser.innerHTML = `<span class="text-pink">@${data.username}</span> (${data.repeatCount}x ${data.giftName})`;
+        }
+        
+        // Calcular y actualizar Top Donante dinámico
+        const cleanGift = data.giftName.toLowerCase().trim();
+        const coins = (GIFT_COIN_VALUES[cleanGift] || 1) * (data.repeatCount || 1);
+        if (!donorTotals[data.username]) donorTotals[data.username] = 0;
+        donorTotals[data.username] += coins;
+        
+        if (donorTotals[data.username] > topDonorCoins) {
+            topDonorCoins = donorTotals[data.username];
+            topDonorUser = data.username;
+            const tickerTopUser = document.getElementById('tickerTopUser');
+            if (tickerTopUser) {
+                tickerTopUser.innerHTML = `<span class="text-yellow">@${topDonorUser}</span> (${topDonorCoins} 🪙)`;
+            }
+        }
+    });
+
+    socket.on('follow', (data) => {
+        const tickerFollowUser = document.getElementById('tickerFollowUser');
+        if (tickerFollowUser) {
+            tickerFollowUser.innerHTML = `<span class="text-cyan">@${data.username}</span>`;
+        }
+        showToast(`👤 @${data.username} te empezó a seguir!`);
+    });
+
+    socket.on('chat', (data) => {
+        handleChatCommand(data.username, data.comment);
     });
 
     socket.on('config_updated', () => {
@@ -1021,4 +1059,122 @@ if (typeof io !== 'undefined') {
         console.log('Conectado a TikTok para:', data.tiktokUsername);
     });
 }
+
+// ─── LÓGICA DE CONTROL POR CHAT Y TICKER EN VIVO ───
+
+// Cambiar color de luces principal del tema
+function changeThemePrimaryColor(hexColor, colorName) {
+    document.documentElement.style.setProperty('--primary', hexColor);
+    
+    // Calcular color de brillo translúcido
+    let r = 237, g = 28, b = 36;
+    if (hexColor.startsWith('#')) {
+        const hex = hexColor.slice(1);
+        if (hex.length === 6) {
+            r = parseInt(hex.substring(0, 2), 16);
+            g = parseInt(hex.substring(2, 4), 16);
+            b = parseInt(hex.substring(4, 6), 16);
+        }
+    }
+    document.documentElement.style.setProperty('--primary-glow', `rgba(${r}, ${g}, ${b}, 0.2)`);
+    
+    // Actualizar fondo del slider si estuviera visible
+    const slider = document.getElementById('volSlider');
+    if (slider) {
+        const v = slider.value;
+        slider.style.background = `linear-gradient(to right, var(--primary) ${v}%, var(--primary-glow) ${v}%)`;
+    }
+}
+
+// Manejar comandos del chat de TikTok
+function handleChatCommand(username, comment) {
+    if (!comment) return;
+    
+    const text = comment.trim();
+    if (!text.startsWith('!')) return; // Solo procesar comandos
+    
+    const parts = text.split(' ');
+    const command = parts[0].toLowerCase();
+    const arg = parts.slice(1).join(' ').toLowerCase().trim();
+    
+    console.log(`🤖 Comando recibido de @${username}: ${command} ${arg}`);
+    
+    if (command === '!visualizador' || command === '!viz') {
+        if (['led', 'bars', 'wave'].includes(arg)) {
+            setVizMode(arg);
+            showToast(`🎮 @${username} cambió el visualizador a: ${arg.toUpperCase()}`);
+        }
+    } 
+    else if (command === '!color') {
+        const colorMap = {
+            'rojo': '#ef4444',
+            'red': '#ef4444',
+            'azul': '#3b82f6',
+            'blue': '#3b82f6',
+            'verde': '#22c55e',
+            'green': '#22c55e',
+            'rosa': '#ff0050',
+            'pink': '#ff0050',
+            'morado': '#8b5cf6',
+            'purple': '#8b5cf6',
+            'amarillo': '#eab308',
+            'yellow': '#eab308',
+            'celeste': '#06b6d4',
+            'cyan': '#00f0ff',
+            'neon': '#00f0ff'
+        };
+        
+        const targetColor = colorMap[arg];
+        if (targetColor) {
+            changeThemePrimaryColor(targetColor, arg);
+            showToast(`🌈 @${username} cambió el color de luces a: ${arg.toUpperCase()}`);
+        }
+    }
+    else if (command === '!tema') {
+        if (arg === 'oscuro' || arg === 'dark') {
+            document.body.classList.add('dark-theme');
+            localStorage.setItem('rx-theme', 'dark');
+            updateThemeIconsAndMeta(true);
+            showToast(`🌓 @${username} activó el Tema Oscuro`);
+        } else if (arg === 'claro' || arg === 'light') {
+            document.body.classList.remove('dark-theme');
+            localStorage.setItem('rx-theme', 'light');
+            updateThemeIconsAndMeta(false);
+            showToast(`🌓 @${username} activó el Tema Claro`);
+        }
+    }
+}
+
+// Rotación del ticker cada 4 segundos
+let currentTickerIndex = 0;
+function rotateTicker() {
+    const items = document.querySelectorAll('.rx-ticker-item');
+    if (items.length === 0) return;
+    
+    items.forEach((item, index) => {
+        if (index === currentTickerIndex) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+    
+    currentTickerIndex = (currentTickerIndex + 1) % items.length;
+}
+setInterval(rotateTicker, 4000);
+
+// Cálculo del Top Donador dinámico
+let topDonorUser = '';
+let topDonorCoins = 0;
+const GIFT_COIN_VALUES = {
+    'rose': 1,
+    'ice cream cone': 1,
+    'tiktok': 1,
+    'wink wink': 5,
+    'glow stick': 5,
+    'pop': 5,
+    'oldies': 5,
+    'love you so much': 10
+};
+const donorTotals = {};
 

@@ -537,9 +537,28 @@
                         </div>
                     </div>
 
-                    <button class="btn btn-accent btn-full" id="simulateAlertBtn">
+                    <button class="btn btn-accent btn-full" id="simulateAlertBtn" style="margin-bottom: 1rem;">
                         <i class="fa-solid fa-paper-plane"></i> Lanzar Alerta
                     </button>
+
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.25rem 0;">
+
+                    <div class="form-group">
+                        <label for="simCommentField">Mensaje / Comando de Chat</label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-comment"></i>
+                            <input type="text" id="simCommentField" placeholder="Ej. !color verde, !viz wave">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" style="flex: 1;" id="simulateChatBtn">
+                            <i class="fa-solid fa-comments"></i> Chat
+                        </button>
+                        <button class="btn btn-success" style="flex: 1;" id="simulateFollowBtn">
+                            <i class="fa-solid fa-user-plus"></i> Seguidor
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -884,6 +903,41 @@
                 showToast('Error de conexión al simular', true);
             }
         }
+
+        // Simular comentario de chat desde Sidebar
+        document.getElementById('simulateChatBtn').addEventListener('click', async () => {
+            const testUser = document.getElementById('simUserField').value.trim() || 'espectador_VIP';
+            const comment = document.getElementById('simCommentField').value.trim();
+            if (!comment) {
+                showToast('Por favor escribe un mensaje o comando de chat', true);
+                return;
+            }
+            try {
+                const res = await fetch(`/test-chat?user=${encodeURIComponent(testUser)}&comment=${encodeURIComponent(comment)}`);
+                if (res.ok) {
+                    showToast(`Simulación de chat enviada: @${testUser}: "${comment}"`);
+                } else {
+                    showToast('Error al enviar simulación de chat', true);
+                }
+            } catch (e) {
+                showToast('Error de conexión al simular chat', true);
+            }
+        });
+
+        // Simular seguidor desde Sidebar
+        document.getElementById('simulateFollowBtn').addEventListener('click', async () => {
+            const testUser = document.getElementById('simUserField').value.trim() || 'nuevo_seguidor';
+            try {
+                const res = await fetch(`/test-follow?user=${encodeURIComponent(testUser)}`);
+                if (res.ok) {
+                    showToast(`Simulación de seguidor enviada: @${testUser}`);
+                } else {
+                    showToast('Error al enviar simulación de seguidor', true);
+                }
+            } catch (e) {
+                showToast('Error de conexión al simular seguidor', true);
+            }
+        });
 
         // Guardar/Actualizar usuario de TikTok
         document.getElementById('saveUserBtn').addEventListener('click', async () => {

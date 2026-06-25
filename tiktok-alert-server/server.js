@@ -44,6 +44,30 @@ app.get('/test-gift', (req, res) => {
     res.send(`Alerta de regalo simulada con éxito. Tipo: "${giftName}", Usuario: @${username}, Cantidad: ${repeatCount}`);
 });
 
+// Ruta para simular chat de prueba (Comandos)
+app.get('/test-chat', (req, res) => {
+    const username = req.query.user || 'espectador_VIP';
+    const comment = req.query.comment || '¡Hola!';
+    console.log(`🧪 [TEST] Simulando chat de @${username}: "${comment}"`);
+    io.emit('chat', {
+        username: username,
+        nickname: username,
+        comment: comment
+    });
+    res.send(`Comentario simulado de @${username}: "${comment}"`);
+});
+
+// Ruta para simular seguidor de prueba
+app.get('/test-follow', (req, res) => {
+    const username = req.query.user || 'nuevo_seguidor';
+    console.log(`🧪 [TEST] Simulando seguidor @${username}`);
+    io.emit('follow', {
+        username: username,
+        nickname: username
+    });
+    res.send(`Seguidor simulado: @${username}`);
+});
+
 // Ruta para obtener la configuración de alertas (CRUD - Read)
 app.get('/api/alerts-config', (req, res) => {
     const filePath = path.join(__dirname, '../alerts-config.json');
