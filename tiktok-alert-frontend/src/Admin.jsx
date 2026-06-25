@@ -64,7 +64,7 @@ export default function Admin() {
 
   // Socket IO setup
   useEffect(() => {
-    const socketServerUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    const socketServerUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.endsWith('github.io')
       ? 'http://localhost:3000'
       : window.location.origin;
 

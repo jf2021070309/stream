@@ -2194,3 +2194,8 @@
         .text-cyan { color: #00f0ff !important; text-shadow: 0 0 8px rgba(0, 240, 255, 0.4); }
         .text-pink { color: #ff0050 !important; text-shadow: 0 0 8px rgba(255, 0, 80, 0.4); }
         .text-yellow { color: #facc15 !important; text-shadow: 0 0 8px rgba(250, 204, 21, 0.4); }
+
+        /* React Root Sizing Fix */
+        #root {
+            width: 100%;
+        }
