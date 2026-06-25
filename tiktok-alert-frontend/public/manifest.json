@@ -1,0 +1,17 @@
+{
+  "name": "Radio Xero",
+  "short_name": "Radio Xero",
+  "description": "Música sin parar 24/7",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#ED1C24",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -304,6 +304,14 @@ function startAnalyser() {
         const brickGap = 1.5;   // Espacio entre bloques
         const totalBricks = Math.floor(canvasH / (brickHeight + brickGap));
 
+        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#ef4444';
+
+        // Degradado dinámico de neón para los ladrillos activos
+        const activeGradient = ctx.createLinearGradient(0, canvasH, 0, 0);
+        activeGradient.addColorStop(0, primaryColor + 'cc'); // Base del color translúcida
+        activeGradient.addColorStop(0.7, primaryColor);      // Color sólido en zona media
+        activeGradient.addColorStop(1, '#ffffff');           // Brillo blanco en la cima
+
         let x = gap / 2;
         const step = Math.floor(dataArr.length / 2 / barCount);
 
@@ -320,15 +328,10 @@ function startAnalyser() {
             for (let b = 0; b < totalBricks; b++) {
                 const y = canvasH - (b * (brickHeight + brickGap)) - brickHeight;
 
-                // Determinar color del ladrillo
-                const percent = (b / totalBricks) * 100;
                 if (b < activeBricks) {
-                    if (percent < 50) ctx.fillStyle = '#22c55e'; // Verde
-                    else if (percent < 80) ctx.fillStyle = '#f97316'; // Naranja
-                    else ctx.fillStyle = '#ef4444'; // Rojo
-
+                    ctx.fillStyle = activeGradient;
                     ctx.shadowBlur = 4;
-                    ctx.shadowColor = ctx.fillStyle;
+                    ctx.shadowColor = primaryColor;
                 } else {
                     // Ladrillos inactivos (fondo sutil)
                     ctx.fillStyle = document.body.classList.contains('dark-theme') ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.05)';
@@ -353,17 +356,20 @@ function startAnalyser() {
         const canvasW = canvas.width / window.devicePixelRatio;
         const canvasH = canvas.height / window.devicePixelRatio;
 
-        // Degradado tricolor para la onda
+        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#ef4444';
+        const primaryGlow = getComputedStyle(document.documentElement).getPropertyValue('--primary-glow').trim() || 'rgba(239, 68, 68, 0.3)';
+
+        // Degradado neon fluido para la línea de la onda
         const gradient = ctx.createLinearGradient(0, canvasH, 0, 0);
-        gradient.addColorStop(0, '#22c55e');   // Verde abajo
-        gradient.addColorStop(0.5, '#f97316'); // Naranja medio
-        gradient.addColorStop(0.9, '#ef4444'); // Rojo arriba (picos)
+        gradient.addColorStop(0, primaryColor + '99'); // Translúcido abajo
+        gradient.addColorStop(0.6, primaryColor);      // Color sólido medio
+        gradient.addColorStop(1, '#ffffff');           // Brillo blanco arriba
 
         ctx.beginPath();
         ctx.lineWidth = 2.5;
         ctx.strokeStyle = gradient;
         ctx.shadowBlur = 10;
-        ctx.shadowColor = 'rgba(237, 28, 36, 0.3)';
+        ctx.shadowColor = primaryColor;
 
         const sliceWidth = canvasW / (dataArr.length / 2);
         let x = 0;
@@ -390,9 +396,8 @@ function startAnalyser() {
         ctx.lineTo(canvasW, canvasH);
         ctx.lineTo(0, canvasH);
         const fillGradient = ctx.createLinearGradient(0, canvasH, 0, 0);
-        fillGradient.addColorStop(0, 'rgba(34, 197, 94, 0.1)');
-        fillGradient.addColorStop(0.5, 'rgba(249, 115, 22, 0.1)');
-        fillGradient.addColorStop(1, 'rgba(239, 68, 68, 0.1)');
+        fillGradient.addColorStop(0, 'rgba(0,0,0,0)');
+        fillGradient.addColorStop(1, primaryGlow);
         ctx.fillStyle = fillGradient;
         ctx.fill();
     }

@@ -20,8 +20,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Servir archivos estáticos del reproductor si se decide usar localmente
-app.use(express.static(path.join(__dirname, '../')));
+// Servir archivos estáticos del compilado de React (Overlay y Admin Dashboard)
+app.use(express.static(path.join(__dirname, '../tiktok-alert-frontend/dist')));
+// Servir carpetas de recursos multimedia (gifts y avatars)
+app.use('/gifts', express.static(path.join(__dirname, '../gifts')));
+app.use('/avatar', express.static(path.join(__dirname, '../avatar')));
 
 // Ruta para simular regalos de prueba
 app.get('/test-gift', (req, res) => {
@@ -235,10 +238,12 @@ function bindConnectionEvents(connInstance) {
         const user = data.user || data;
         const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
         const nickname = user.nickname || data.nickname || username;
+        const commentText = data.comment || data.text || '';
+        console.log(`💬 [CHAT] @${username}: "${commentText}"`);
         io.emit('chat', {
             username: username,
             nickname: nickname,
-            comment: data.comment
+            comment: commentText
         });
     });
 

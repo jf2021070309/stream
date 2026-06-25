@@ -3,187 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radio Xero - Control de Alertas TikTok</title>
-    <!-- Google Fonts: Outfit -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
+    <title>TikPop - Panel de Control</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg-dark: #0a0b10;
-            --card-bg: #131520;
-            --accent-cyan: #00f0ff;
-            --accent-pink: #ff007f;
-            --text-main: #f5f6fa;
-            --text-muted: #8b92b6;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --border-focus: rgba(0, 240, 255, 0.4);
-            --glow-cyan: 0 0 15px rgba(0, 240, 255, 0.3);
-            --glow-pink: 0 0 15px rgba(ff, 0, 127, 0.3);
+            --bg-darker: #080914;
+            --bg-sidebar: #0c0d1e;
+            --bg-panel: #111226;
+            --bg-card: #161732;
+            --bg-input: #0b0c16;
+            --border-color: #20223f;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --accent-purple: #8b5cf6;
+            --gradient-accent: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            --glow-cyan: 0 0 15px rgba(6, 182, 212, 0.4);
+            --glow-pink: 0 0 15px rgba(236, 72, 153, 0.4);
         }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             font-family: 'Outfit', sans-serif;
-            scrollbar-width: thin;
-            scrollbar-color: var(--accent-cyan) var(--bg-dark);
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-darker);
             color: var(--text-main);
-            min-height: 100vh;
-            padding: 2rem 1rem;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 240, 255, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(255, 0, 127, 0.05) 0%, transparent 40%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
+        /* Container Layout */
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            width: 100%;
+            height: 100vh;
         }
 
-        /* Header Style */
-        header {
+        /* Sidebar Styling */
+        aside {
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .logo-area {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2.5rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1.5rem;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .logo-icon {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-pink));
+            width: 42px;
+            height: 42px;
+            background: var(--gradient-accent);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--glow-cyan);
+            box-shadow: var(--glow-pink);
         }
 
         .logo-icon i {
-            color: var(--bg-dark);
+            color: white;
             font-size: 1.5rem;
         }
 
-        header h1 {
-            font-size: 1.8rem;
+        .logo-text h1 {
+            font-size: 1.4rem;
             font-weight: 800;
-            background: linear-gradient(to right, #ffffff, var(--text-muted));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
         }
 
-        header p {
-            color: var(--accent-cyan);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 600;
-        }
-
-        /* Layout Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-
-        @media (min-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 320px 1fr;
-            }
-        }
-
-        /* Card Styles */
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 1.8rem;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: border-color 0.3s ease;
-        }
-
-        .card:hover {
-            border-color: rgba(0, 240, 255, 0.2);
-        }
-
-        .card h2 {
-            font-size: 1.25rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 600;
-        }
-
-        .card h2 i {
-            color: var(--accent-cyan);
-        }
-
-        /* Form Controls */
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--accent-pink);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .input-group {
-            position: relative;
+        /* Sidebar Cards */
+        .sb-card {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.2rem;
             display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
         }
 
-        .input-group i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
+        .sb-card h3 {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sb-card h3 i {
+            color: var(--accent-cyan);
+        }
+
+        .sb-input-group {
+            position: relative;
+        }
+
+        .sb-input {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: var(--text-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .sb-input:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .sb-subtitle {
+            font-size: 0.75rem;
             color: var(--text-muted);
         }
 
-        .input-group input, .form-group select {
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px 12px 10px 38px;
-            color: var(--text-main);
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
         }
 
-        .form-group select {
-            padding-left: 12px;
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+            transition: all 0.3s;
         }
 
-        .input-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--accent-cyan);
-            box-shadow: var(--glow-cyan);
+        .status-dot.connected {
+            background-color: #22c55e;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
         }
 
         /* Buttons */
@@ -192,222 +178,579 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            padding: 10px 18px;
+            padding: 10px 16px;
             border-radius: 8px;
             font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s;
             border: none;
             text-decoration: none;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-cyan), #00a8ff);
-            color: var(--bg-dark);
-            box-shadow: var(--glow-cyan);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
-
         .btn-accent {
-            background: linear-gradient(135deg, var(--accent-pink), #c000ff);
-            color: #ffffff;
+            background: var(--gradient-accent);
+            color: white;
             box-shadow: var(--glow-pink);
         }
 
         .btn-accent:hover {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             filter: brightness(1.1);
         }
 
-        .btn-secondary {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
+        .btn-outline-danger {
+            background-color: transparent;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            margin-top: auto;
         }
 
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: var(--text-muted);
+        .btn-outline-danger:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
         }
 
-        .btn-danger {
-            background-color: rgba(255, 46, 99, 0.15);
-            color: #ff2e63;
-            border: 1px solid rgba(255, 46, 99, 0.3);
+        /* URL Copy Input Group */
+        .copy-group {
+            display: flex;
+            gap: 6px;
         }
 
-        .btn-danger:hover {
-            background-color: #ff2e63;
+        .btn-copy {
+            background-color: rgba(236, 72, 153, 0.15);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            color: var(--accent-pink);
+            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-copy:hover {
+            background-color: var(--accent-pink);
             color: white;
         }
 
-        .btn-success {
-            background-color: rgba(0, 230, 118, 0.15);
-            color: #00e676;
-            border: 1px solid rgba(0, 230, 118, 0.3);
+        /* Event Log Widget */
+        .event-log {
+            flex: 1;
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            min-height: 200px;
+            max-height: 300px;
         }
 
-        .btn-success:hover {
-            background-color: #00e676;
-            color: var(--bg-dark);
+        .event-entries {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.8rem;
+            padding-right: 4px;
         }
 
-        .btn-mini {
-            padding: 6px 10px;
-            font-size: 0.75rem;
+        .event-entries::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .event-entries::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        .event-entry {
+            background-color: rgba(0, 0, 0, 0.2);
             border-radius: 6px;
+            padding: 6px 8px;
+            line-height: 1.3;
+            border-left: 3px solid var(--border-color);
         }
 
-        .btn-full {
-            width: 100%;
+        .event-entry.chat { border-left-color: var(--accent-cyan); }
+        .event-entry.gift { border-left-color: var(--accent-pink); }
+        .event-entry.follow { border-left-color: #22c55e; }
+
+        .event-time {
+            color: var(--text-muted);
+            margin-right: 4px;
+            font-family: monospace;
         }
 
-        /* Status Indicator */
-        .status-badge {
+        /* Main Workspace Panel */
+        main {
+            background-color: var(--bg-panel);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Navigation Tabs */
+        header {
+            background-color: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tabs-container {
+            display: flex;
+            height: 100%;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0 1.5rem;
+            height: 100%;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            background-color: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-color);
-            margin-top: 0.5rem;
-            width: fit-content;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #ff4d4d;
-        }
-
-        .status-dot.active {
-            background-color: #00e676;
-            box-shadow: 0 0 10px #00e676;
-        }
-
-        /* Alert CRUD Table */
-        .table-container {
-            overflow-x: auto;
-            margin-top: 1rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th {
-            padding: 12px;
-            border-bottom: 2px solid var(--border-color);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 800;
-        }
-
-        td {
-            padding: 14px 12px;
-            border-bottom: 1px solid var(--border-color);
+            gap: 0.6rem;
             font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
         }
 
-        tr:hover td {
-            background-color: rgba(255, 255, 255, 0.01);
+        .tab-btn i {
+            font-size: 1rem;
         }
 
-        .column-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
+        .tab-btn:hover {
+            color: var(--text-main);
         }
 
-        .badge-left {
-            background-color: rgba(255, 0, 127, 0.15);
+        .tab-btn.active {
             color: var(--accent-pink);
-            border: 1px solid rgba(255, 0, 127, 0.3);
         }
 
-        .badge-right {
-            background-color: rgba(0, 240, 255, 0.15);
-            color: var(--accent-cyan);
-            border: 1px solid rgba(0, 240, 255, 0.3);
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-accent);
+            box-shadow: var(--glow-pink);
         }
 
-        .actions-cell {
+        .global-actions {
             display: flex;
-            gap: 0.5rem;
-            justify-content: flex-end;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        /* Modal / Form Row */
-        .config-actions-bar {
+        /* Content Sections */
+        .content-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card Layouts */
+        .content-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
+            margin-bottom: 1.2rem;
         }
 
-        /* Toast Message */
+        .card-header-flex h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .card-header-flex h2 i {
+            color: var(--accent-pink);
+        }
+
+        /* Form elements inside Content Cards */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .select-input, .text-input {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            outline: none;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .select-input:focus, .text-input:focus {
+            border-color: var(--accent-pink);
+            box-shadow: var(--glow-pink);
+        }
+
+        /* Configured Gifts Grid */
+        .gifts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gift-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .gift-card:hover {
+            border-color: rgba(236, 72, 153, 0.3);
+        }
+
+        .gift-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .gift-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .gift-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 4px;
+            object-fit: contain;
+        }
+
+        .gift-details h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .gift-details span {
+            font-size: 0.8rem;
+            color: #eab308;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        /* Switch Toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 22px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #20223f;
+            transition: .3s;
+            border-radius: 22px;
+            border: 1px solid #2e3056;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: var(--gradient-accent);
+            border-color: var(--accent-pink);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        /* Sliders */
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #20223f;
+            border-radius: 3px;
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-pink);
+            cursor: pointer;
+            box-shadow: var(--glow-pink);
+            transition: transform 0.1s;
+        }
+
+        .range-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        /* Media Subsections (MP3 & Video Upload Mockups) */
+        .media-sub-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+        }
+
+        .media-box {
+            background-color: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .media-box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .media-box-header label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .subir-btn-wrapper {
+            position: relative;
+            display: flex;
+        }
+
+        .btn-upload-mock {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .btn-upload-mock:hover {
+            background-color: var(--border-color);
+        }
+
+        .media-filename {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            word-break: break-all;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: center;
+        }
+
+        /* Bottom Row Controls */
+        .gift-card-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 0.5rem;
+        }
+
+        .btn-probar {
+            flex: 1;
+            background-color: rgba(236, 72, 153, 0.15);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            color: var(--accent-pink);
+            font-size: 0.8rem;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-probar:hover {
+            background-color: var(--accent-pink);
+            color: white;
+        }
+
+        .btn-action-small {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-action-small:hover {
+            color: var(--text-main);
+            background-color: var(--border-color);
+        }
+
+        .btn-action-small.delete:hover {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+            color: #f87171;
+        }
+
+        /* Toast Styling */
         .toast {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background-color: var(--card-bg);
-            border-left: 4px solid var(--accent-cyan);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), var(--glow-cyan);
-            padding: 12px 24px;
-            border-radius: 8px;
-            color: var(--text-main);
+            background-color: var(--bg-card);
+            border: 1px solid var(--accent-pink);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-weight: 600;
+            box-shadow: var(--glow-pink);
             transform: translateY(150%);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
         }
 
         .toast.show {
             transform: translateY(0);
         }
 
-        .toast.error {
-            border-left-color: var(--accent-pink);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), var(--glow-pink);
+        .toast i {
+            color: var(--accent-pink);
+            font-size: 1.25rem;
         }
 
-        /* Editor Dialog overlay */
+        .toast.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .toast.error i {
+            color: #ef4444;
+        }
+
+        /* Modal Redesign Overlay */
         .overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(5, 6, 10, 0.8);
-            backdrop-filter: blur(5px);
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
-            z-index: 1000;
+            transition: opacity 0.3s;
+            z-index: 999;
         }
 
         .overlay.active {
@@ -416,34 +759,30 @@
         }
 
         .modal {
-            background-color: var(--card-bg);
+            background-color: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            width: 90%;
-            max-width: 480px;
-            padding: 2rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-            transform: scale(0.9);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .overlay.active .modal {
-            transform: scale(1);
+            width: 480px;
+            max-width: 90%;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
         }
 
         .modal-header h3 {
-            font-size: 1.3rem;
-            font-weight: 800;
+            font-size: 1.2rem;
+            font-weight: 700;
         }
 
-        .modal-header .close-btn {
+        .close-btn {
             background: none;
             border: none;
             color: var(--text-muted);
@@ -451,225 +790,650 @@
             cursor: pointer;
         }
 
+        .close-btn:hover {
+            color: white;
+        }
+
         .modal-footer {
             display: flex;
             justify-content: flex-end;
             gap: 0.75rem;
-            margin-top: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Generic Settings View Layout */
+        .setting-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .grid-config {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .reset-badge {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .reset-badge:hover {
+            color: white;
+            background-color: var(--border-color);
+        }
+
+        /* Licencia Tab Specific */
+        .license-box {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            align-items: center;
+            text-align: center;
+            padding: 2.5rem 1rem;
+        }
+
+        .license-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: var(--glow-cyan);
+        }
+
+        .license-status-tag {
+            background-color: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 20px;
+            padding: 4px 16px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .license-details {
+            width: 100%;
+            max-width: 400px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .license-detail-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding-bottom: 0.5rem;
+        }
+
+        .license-detail-row:last-child {
+            border: none;
+            padding: 0;
+        }
+
+        .license-detail-row span:first-child {
+            color: var(--text-muted);
+        }
+
+        .license-detail-row span:last-child {
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="app-container">
         
-        <header>
-            <div class="logo-section">
+        <!-- SIDEBAR LEFT -->
+        <aside>
+            <div class="logo-area">
                 <div class="logo-icon">
                     <i class="fa-brands fa-tiktok"></i>
                 </div>
-                <div>
-                    <h1>Panel de Alertas Live</h1>
-                    <p>Radio Xero Stream Control</p>
+                <div class="logo-text">
+                    <h1>TikPop</h1>
+                    <p>Panel de Control</p>
                 </div>
             </div>
-            <div>
-                <a href="/" class="btn btn-secondary">
-                    <i class="fa-solid fa-play"></i> Ver Reproductor
-                </a>
-            </div>
-        </header>
 
-        <div class="dashboard-grid">
-            
-            <!-- Sidebar: Config de TikTok y Simulador -->
-            <div style="display: flex; flex-direction: column; gap: 2rem;">
-                
-                <!-- Card 1: TikTok Connection -->
-                <div class="card">
-                    <h2><i class="fa-solid fa-signal"></i> TikTok Live</h2>
+            <!-- Card: Conectar a TikTok -->
+            <div class="sb-card">
+                <h3><i class="fa-solid fa-link"></i> Conectar a TikTok</h3>
+                <div class="sb-input-group">
+                    <input type="text" class="sb-input" id="tiktokUserField" placeholder="ej. radioxero26">
+                </div>
+                <span class="sb-subtitle">Escribe el nombre SIN el símbolo @</span>
+                <div class="status-indicator">
+                    <div class="status-dot" id="connectionDot"></div>
+                    <span id="connectionText">Desconectado</span>
+                </div>
+                <button class="btn btn-accent" id="saveUserBtn">Conectar</button>
+            </div>
+
+            <!-- Card: URL Overlay -->
+            <div class="sb-card">
+                <h3><i class="fa-solid fa-display"></i> URL Overlay</h3>
+                <div class="copy-group">
+                    <input type="text" class="sb-input" id="overlayUrlField" readonly value="https://jf2021070309.github.io/stream/?v=24">
+                    <button class="btn-copy" id="copyUrlBtn" title="Copiar URL">
+                        <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card: Eventos Log -->
+            <div class="event-log">
+                <h3><i class="fa-solid fa-bolt"></i> Eventos Recientes</h3>
+                <div class="event-entries" id="eventLogContainer">
+                    <div class="event-entry info" style="border-left-color: var(--text-muted);">
+                        <span class="event-text" style="color: var(--text-muted);">Esperando eventos del live...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Exit Button -->
+            <button class="btn btn-outline-danger" id="exitBtn">
+                <i class="fa-solid fa-power-off"></i> Salir completamente
+            </button>
+        </aside>
+
+        <!-- MAIN WORKSPACE -->
+        <main>
+            <!-- Header with navigation tabs -->
+            <header>
+                <div class="tabs-container">
+                    <button class="tab-btn active" data-tab="regalos">
+                        <i class="fa-solid fa-gift"></i> Regalos
+                    </button>
+                    <button class="tab-btn" data-tab="likes">
+                        <i class="fa-solid fa-heart"></i> Me Gusta
+                    </button>
+                    <button class="tab-btn" data-tab="shares">
+                        <i class="fa-solid fa-share-nodes"></i> Compartir
+                    </button>
+                    <button class="tab-btn" data-tab="follows">
+                        <i class="fa-solid fa-user-plus"></i> Seguir
+                    </button>
+                    <button class="tab-btn" data-tab="licencia">
+                        <i class="fa-solid fa-key"></i> Licencia
+                    </button>
+                    <button class="tab-btn" data-tab="simulador">
+                        <i class="fa-solid fa-flask"></i> Simulador
+                    </button>
+                </div>
+
+                <div class="global-actions">
+                    <button class="btn btn-accent" id="saveAllConfigsBtn">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Todo
+                    </button>
+                </div>
+            </header>
+
+            <!-- Scrollable Workspace Body -->
+            <div class="content-area">
+
+                <!-- 🎁 TAB: REGALOS -->
+                <div class="tab-content active" id="regalosTab">
                     
-                    <div class="form-group">
-                        <label for="tiktokUserField">Usuario de TikTok</label>
-                        <div class="input-group">
-                            <i class="fa-solid fa-at"></i>
-                            <input type="text" id="tiktokUserField" placeholder="Ej. radioxero26">
+                    <!-- Card: Añadir Regalo -->
+                    <div class="content-card">
+                        <div class="card-header-flex">
+                            <h2><i class="fa-solid fa-circle-plus"></i> Añadir Regalo <span style="font-size:0.8rem; color: var(--text-muted); font-weight: normal; margin-left: 5px;">(5/4 gratis)</span></h2>
+                        </div>
+                        
+                        <div class="form-row" style="align-items: flex-end;">
+                            <div class="form-group" style="flex: 2;">
+                                <label>Seleccionar Regalo</label>
+                                <select class="select-input" id="giftAddSelect">
+                                    <option value="rose" data-coins="1">Rose (1 coin)</option>
+                                    <option value="ice cream cone" data-coins="1">Ice Cream Cone (1 coin)</option>
+                                    <option value="wink wink" data-coins="1">Wink wink (1 coin)</option>
+                                    <option value="glow stick" data-coins="1">Glow Stick (1 coin)</option>
+                                    <option value="tiktok" data-coins="1">TikTok (1 coin)</option>
+                                    <option value="pop" data-coins="1">Pop (1 coin)</option>
+                                    <option value="oldies" data-coins="1">Oldies (1 coin)</option>
+                                    <option value="love you so much" data-coins="1">Love you so much (1 coin)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <button class="btn btn-accent" style="width: 100%; height: 40px;" id="addNewGiftBtn">
+                                    <i class="fa-solid fa-plus"></i> Añadir
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <button class="btn btn-primary btn-full" id="saveUserBtn">
-                        <i class="fa-solid fa-rotate"></i> Conectar / Actualizar
-                    </button>
 
-                    <div class="status-badge">
-                        <div class="status-dot" id="connectionDot"></div>
-                        <span id="connectionText">Desconectado</span>
+                    <!-- Configured Title -->
+                    <div class="card-header-flex" style="margin-bottom: 1.5rem; margin-top: 1rem;">
+                        <h3 style="font-size: 1.1rem; font-weight: 700;"><i class="fa-regular fa-square-check" style="color:var(--accent-pink);"></i> Regalos Configurados</h3>
+                        <span id="alertCount" style="font-size: 0.85rem; color: var(--text-muted);">0 configurados</span>
+                    </div>
+
+                    <!-- Cards Grid -->
+                    <div class="gifts-grid" id="giftsGridContainer">
+                        <!-- Loaded dynamically via JS -->
+                    </div>
+
+                </div>
+
+                <!-- ♥ TAB: LIKES -->
+                <div class="tab-content" id="likesTab">
+                    <div class="content-card">
+                        <div class="card-header-flex">
+                            <h2><i class="fa-solid fa-heart"></i> Meta de Likes</h2>
+                            <button class="reset-badge">Re-establecer</button>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            Configura una meta para incentivar a tus espectadores a dar "Likes" a tu transmisión en vivo.
+                        </p>
+
+                        <div class="setting-section">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Meta de Likes (Total acumulado)</label>
+                                    <input type="number" class="text-input" value="250">
+                                </div>
+                                <div class="form-group" style="justify-content: flex-end;">
+                                    <div style="font-size:0.9rem; color: var(--text-muted);">
+                                        Progreso Actual: <strong style="color: var(--accent-pink); font-size: 1.3rem; margin-left: 5px;">0</strong>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="justify-content: flex-end;">
+                                    <button class="btn btn-outline-danger" style="padding: 8px 12px; font-size: 0.85rem;">Reiniciar Contador</button>
+                                </div>
+                            </div>
+
+                            <hr style="border:0; border-top: 1px solid var(--border-color);">
+
+                            <h3>Configuración Visual</h3>
+                            <div class="grid-config">
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Tamaño General</span>
+                                        <span>1.0x</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="0.5" max="2.0" step="0.1" value="1.0">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Pos X</span>
+                                        <span>27%</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="0" max="100" value="27">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Pos Y</span>
+                                        <span>42%</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="0" max="100" value="42">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Duración Alerta (s)</span>
+                                        <span>4s</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="1" max="15" value="4">
+                                </div>
+                            </div>
+
+                            <hr style="border:0; border-top: 1px solid var(--border-color);">
+
+                            <h3>Multimedia</h3>
+                            <div class="media-sub-grid">
+                                <div class="media-box">
+                                    <div class="media-box-header">
+                                        <label><input type="checkbox" checked> MP3</label>
+                                        <span style="color:var(--accent-pink);">50%</span>
+                                    </div>
+                                    <button class="btn-upload-mock">Subir</button>
+                                    <span class="media-filename">1772179067282-737695902.mp3</span>
+                                    <input type="range" class="range-slider" min="0" max="100" value="50">
+                                </div>
+                                <div class="media-box">
+                                    <div class="media-box-header">
+                                        <label><input type="checkbox"> Video (mp4/webm)</label>
+                                        <span style="color:var(--text-muted);">45%</span>
+                                    </div>
+                                    <button class="btn-upload-mock">Subir</button>
+                                    <span class="media-filename">Sin archivo</span>
+                                    <input type="range" class="range-slider" min="0" max="100" value="45" disabled>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Card 2: Simulador rápido -->
-                <div class="card">
-                    <h2><i class="fa-solid fa-wand-magic-sparkles"></i> Simulador</h2>
-                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">
-                        Envía eventos de regalo falsos a la pantalla del reproductor para probar la animación y el neón.
-                    </p>
+                <!-- 🔗 TAB: SHARES -->
+                <div class="tab-content" id="sharesTab">
+                    <div class="content-card">
+                        <div class="card-header-flex">
+                            <h2><i class="fa-solid fa-share-nodes"></i> Alerta de Compartir</h2>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="simUserField">Nombre de Usuario</label>
-                        <div class="input-group">
-                            <i class="fa-solid fa-user"></i>
-                            <input type="text" id="simUserField" value="espectador_VIP">
+                        <div class="setting-section">
+                            <div class="grid-config">
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Duración (s)</span>
+                                        <span>3</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="1" max="10" value="3">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Combo (ms)</span>
+                                        <span>3000ms</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="500" max="10000" step="500" value="3000">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Tamaño General</span>
+                                        <span>1.9x</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="0.5" max="2.0" step="0.1" value="1.9">
+                                </div>
+                            </div>
+
+                            <hr style="border:0; border-top: 1px solid var(--border-color);">
+
+                            <h3>Multimedia</h3>
+                            <div class="media-sub-grid">
+                                <div class="media-box">
+                                    <div class="media-box-header">
+                                        <label><input type="checkbox" checked> MP3</label>
+                                        <span style="color:var(--accent-pink);">50%</span>
+                                    </div>
+                                    <button class="btn-upload-mock">Subir</button>
+                                    <span class="media-filename">1772157895582-519711054.mp3</span>
+                                    <input type="range" class="range-slider" min="0" max="100" value="50">
+                                </div>
+                                <div class="media-box">
+                                    <div class="media-box-header">
+                                        <label><input type="checkbox"> Video (mp4/webm)</label>
+                                        <span style="color:var(--text-muted);">50%</span>
+                                    </div>
+                                    <button class="btn-upload-mock">Subir</button>
+                                    <span class="media-filename">Sin archivo</span>
+                                    <input type="range" class="range-slider" min="0" max="100" value="50" disabled>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="form-group">
-                        <label for="simGiftSelect">Tipo de Regalo</label>
-                        <select id="simGiftSelect">
-                            <!-- Se carga dinámicamente según la tabla -->
-                        </select>
-                    </div>
+                <!-- 👤 TAB: FOLLOWS -->
+                <div class="tab-content" id="followsTab">
+                    <div class="content-card">
+                        <div class="card-header-flex">
+                            <h2><i class="fa-solid fa-user-plus"></i> Alerta de Seguir</h2>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="simGiftCount">Cantidad (Multiplicador)</label>
-                        <div class="input-group">
-                            <i class="fa-solid fa-hashtag"></i>
-                            <input type="number" id="simGiftCount" value="1" min="1" max="999">
+                        <div class="setting-section">
+                            <h3>Configuración General</h3>
+                            <div class="grid-config">
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Duración (s)</span>
+                                        <span>2</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="1" max="10" value="2">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Combo (ms)</span>
+                                        <span>3000ms</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="500" max="10000" step="500" value="3000">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Tamaño General</span>
+                                        <span>0.9x</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="0.5" max="2.0" step="0.1" value="0.9">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Pos X</span>
+                                        <span>55%</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="0" max="100" value="55">
+                                </div>
+                                <div class="slider-group">
+                                    <div class="slider-header">
+                                        <span>Pos Y</span>
+                                        <span>45%</span>
+                                    </div>
+                                    <input type="range" class="range-slider" min="0" max="100" value="45">
+                                </div>
+                            </div>
+
+                            <hr style="border:0; border-top: 1px solid var(--border-color);">
+
+                            <h3>Multimedia</h3>
+                            <div class="media-sub-grid">
+                                <div class="media-box">
+                                    <div class="media-box-header">
+                                        <label><input type="checkbox" checked> MP3</label>
+                                        <span style="color:var(--accent-pink);">50%</span>
+                                    </div>
+                                    <button class="btn-upload-mock">Subir</button>
+                                    <span class="media-filename">1772260273842-458952151.mp3</span>
+                                    <input type="range" class="range-slider" min="0" max="100" value="50">
+                                </div>
+                                <div class="media-box">
+                                    <div class="media-box-header">
+                                        <label><input type="checkbox" checked> Video (mp4/webm)</label>
+                                        <span style="color:var(--accent-pink);">35%</span>
+                                    </div>
+                                    <button class="btn-upload-mock">Subir</button>
+                                    <span class="media-filename">1772251992751-81829805.webm</span>
+                                    <input type="range" class="range-slider" min="0" max="100" value="35">
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <button class="btn btn-accent btn-full" id="simulateAlertBtn" style="margin-bottom: 1rem;">
-                        <i class="fa-solid fa-paper-plane"></i> Lanzar Alerta
-                    </button>
+                <!-- 🔑 TAB: LICENCIA -->
+                <div class="tab-content" id="licenciaTab">
+                    <div class="content-card">
+                        <div class="license-box">
+                            <div class="license-icon">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <h2>Licencia de TikPop</h2>
+                            <div class="license-status-tag">Activada VIP</div>
+                            <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 450px;">
+                                Gracias por usar TikPop. Tu clave de licencia está vinculada permanentemente y tienes acceso ilimitado a todas las herramientas interactivas y visuales.
+                            </p>
 
-                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.25rem 0;">
-
-                    <div class="form-group">
-                        <label for="simCommentField">Mensaje / Comando de Chat</label>
-                        <div class="input-group">
-                            <i class="fa-solid fa-comment"></i>
-                            <input type="text" id="simCommentField" placeholder="Ej. !color verde, !viz wave">
+                            <div class="license-details">
+                                <div class="license-detail-row">
+                                    <span>Usuario Titular</span>
+                                    <span>Jaime Flores</span>
+                                </div>
+                                <div class="license-detail-row">
+                                    <span>Tipo de Licencia</span>
+                                    <span>VIP Premium Unlimited</span>
+                                </div>
+                                <div class="license-detail-row">
+                                    <span>Estado</span>
+                                    <span style="color:#4ade80;">Vigente y Activa</span>
+                                </div>
+                                <div class="license-detail-row">
+                                    <span>Fecha de Expiración</span>
+                                    <span>Nunca (Vitalicia)</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                </div>
 
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-primary" style="flex: 1;" id="simulateChatBtn">
-                            <i class="fa-solid fa-comments"></i> Chat
-                        </button>
-                        <button class="btn btn-success" style="flex: 1;" id="simulateFollowBtn">
-                            <i class="fa-solid fa-user-plus"></i> Seguidor
-                        </button>
+                <!-- 🧪 TAB: SIMULADOR -->
+                <div class="tab-content" id="simuladorTab">
+                    <div class="content-card">
+                        <div class="card-header-flex">
+                            <h2><i class="fa-solid fa-flask"></i> Simulador de Eventos TikTok Live</h2>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            Usa estas herramientas para probar tus alertas, comandos de chat, temas de neón y tickers en tiempo real sin estar en vivo.
+                        </p>
+
+                        <div class="setting-section">
+                            <!-- Simular Seguidor -->
+                            <div class="content-card" style="background-color: rgba(0, 0, 0, 0.15); margin-bottom: 1rem;">
+                                <h3>👤 Simular Seguidor (Follow)</h3>
+                                <div class="form-row" style="align-items: flex-end; margin-top: 0.8rem;">
+                                    <div class="form-group" style="flex: 2;">
+                                        <label>Nombre de Usuario</label>
+                                        <input type="text" class="text-input" id="simFollowUser" value="espectador_VIP">
+                                    </div>
+                                    <div class="form-group" style="flex: 1;">
+                                        <button class="btn btn-accent" id="btnSimulateFollow" style="width: 100%; height: 40px; background: linear-gradient(135deg, #22c55e, #10b981); box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);">
+                                            <i class="fa-solid fa-user-plus"></i> Simular Seguidor
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Simular Chat / Comandos -->
+                            <div class="content-card" style="background-color: rgba(0, 0, 0, 0.15); margin-bottom: 1rem;">
+                                <h3>💬 Simular Mensaje de Chat (Comandos)</h3>
+                                <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.3rem;">
+                                    Prueba los comandos de chat para el control de luces, visualizadores y temas:
+                                    <code style="color: var(--accent-cyan); font-weight: bold; margin-left: 5px;">!color azul</code>,
+                                    <code style="color: var(--accent-cyan); font-weight: bold; margin-left: 5px;">!viz wave</code>,
+                                    <code style="color: var(--accent-cyan); font-weight: bold; margin-left: 5px;">!tema claro</code>.
+                                </p>
+                                <div class="form-row" style="align-items: flex-end; margin-top: 0.8rem;">
+                                    <div class="form-group" style="flex: 2;">
+                                        <label>Mensaje de Chat / Comando</label>
+                                        <input type="text" class="text-input" id="simChatMessage" placeholder="ej. !color verde">
+                                    </div>
+                                    <div class="form-group" style="flex: 1;">
+                                        <button class="btn btn-accent" id="btnSimulateChat" style="width: 100%; height: 40px; background: linear-gradient(135deg, #06b6d4, #3b82f6); box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);">
+                                            <i class="fa-solid fa-paper-plane"></i> Enviar al Chat
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
             </div>
-
-            <!-- Content Area: CRUD de Alertas -->
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h2><i class="fa-solid fa-list-check"></i> Mapeo de Regalos</h2>
-                    <span style="font-size: 0.85rem; color: var(--text-muted);" id="alertCount">0 configurados</span>
-                </div>
-                
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
-                    Asocia el nombre del regalo en TikTok con tu archivo de video de alerta.
-                </p>
-
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Regalo</th>
-                                <th>Ruta del Video</th>
-                                <th style="text-align: right;">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="alertsTableBody">
-                            <!-- Se rellena por JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="config-actions-bar">
-                    <button class="btn btn-secondary" id="addNewBtn">
-                        <i class="fa-solid fa-plus"></i> Añadir Regalo
-                    </button>
-                    <button class="btn btn-success" id="saveAllConfigsBtn">
-                        <i class="fa-solid fa-floppy-disk"></i> Guardar Todo en Servidor
-                    </button>
-                </div>
-            </div>
-
-        </div>
+        </main>
 
     </div>
 
-    <!-- Edit/Add Modal Overlay -->
+    <!-- Edit Modal Overlay (Maintained for backward edits/image path modifications) -->
     <div class="overlay" id="editModalOverlay">
         <div class="modal">
             <div class="modal-header">
-                <h3 id="modalTitle">Editar Mapeo</h3>
+                <h3 id="modalTitle">Editar Rutas</h3>
                 <button class="close-btn" id="closeModalBtn">&times;</button>
             </div>
             
             <input type="hidden" id="editId">
             
             <div class="form-group">
-                <label for="editGiftName">Nombre del Regalo (de TikTok)</label>
-                <div class="input-group">
-                    <i class="fa-solid fa-gift"></i>
-                    <input type="text" id="editGiftName" placeholder="Ej. rose, helado, tiktok">
+                <label>Ruta de Video Estático</label>
+                <div class="sb-input-group">
+                    <input type="text" id="editVideoUrl" class="sb-input" placeholder="gifts/videos/rosa.mp4">
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="editVideoUrl">Ruta de Video Estático</label>
-                <div class="input-group">
-                    <i class="fa-solid fa-file-video"></i>
-                    <input type="text" id="editVideoUrl" placeholder="Ej. gifts/videos/rosa.mp4">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="editImageUrl">Ruta de Imagen / Icono (Opcional)</label>
-                <div class="input-group">
-                    <i class="fa-solid fa-image"></i>
-                    <input type="text" id="editImageUrl" placeholder="Ej. gifts/img/rose.webp">
+                <label>Ruta de Imagen / Icono</label>
+                <div class="sb-input-group">
+                    <input type="text" id="editImageUrl" class="sb-input" placeholder="gifts/img/rose.webp">
                 </div>
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelModalBtn">Cancelar</button>
-                <button class="btn btn-primary" id="saveModalBtn">Confirmar</button>
+                <button class="btn btn-action-small" id="cancelModalBtn" style="width: auto; padding: 0 15px;">Cancelar</button>
+                <button class="btn btn-accent" id="saveModalBtn">Confirmar</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Popup Notifications -->
+    <!-- Toast Notifications -->
     <div class="toast" id="toastBox">
         <i class="fa-solid fa-circle-check"></i>
         <span id="toastMsg">Cambios guardados con éxito</span>
     </div>
 
-    <!-- Socket.io for Live Connection Feedback -->
+    <!-- Socket.io Local Script -->
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
         // Configuración y variables globales
         let currentAlerts = [];
         let editingIndex = -1;
 
+        // Archivos locales disponibles en las carpetas para selección rápida
+        const AVAILABLE_VIDEOS = [
+            'Love you so much.mp4',
+            'glow stick.mp4',
+            'helado.mp4',
+            'oldies.mp4',
+            'pop.mp4',
+            'rosa.mp4',
+            'tiktok.mp4',
+            'wink wink.mp4'
+        ];
+
+        const AVAILABLE_IMAGES = [
+            'Glow Stick.webp',
+            'Ice Cream Cone.webp',
+            'Love you so much.webp',
+            'Oldies.webp',
+            'Pop.webp',
+            'TikTok.webp',
+            'Wink wink.webp',
+            'rose.webp'
+        ];
+
         // Elementos DOM
-        const alertsTableBody = document.getElementById('alertsTableBody');
+        const giftsGridContainer = document.getElementById('giftsGridContainer');
         const alertCount = document.getElementById('alertCount');
-        const simGiftSelect = document.getElementById('simGiftSelect');
         const tiktokUserField = document.getElementById('tiktokUserField');
         const connectionDot = document.getElementById('connectionDot');
         const connectionText = document.getElementById('connectionText');
+        const eventLogContainer = document.getElementById('eventLogContainer');
         
         // Modal Elementos
         const editModalOverlay = document.getElementById('editModalOverlay');
         const modalTitle = document.getElementById('modalTitle');
         const editId = document.getElementById('editId');
-        const editGiftName = document.getElementById('editGiftName');
         const editVideoUrl = document.getElementById('editVideoUrl');
         const editImageUrl = document.getElementById('editImageUrl');
 
@@ -677,6 +1441,29 @@
         const toastBox = document.getElementById('toastBox');
         const toastMsg = document.getElementById('toastMsg');
 
+        // Tab Switching
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.dataset.tab;
+                tabButtons.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(target + 'Tab').classList.add('active');
+            });
+        });
+
+        // Copiar URL Overlay
+        document.getElementById('copyUrlBtn').addEventListener('click', () => {
+            const overlayUrlField = document.getElementById('overlayUrlField');
+            overlayUrlField.select();
+            document.execCommand('copy');
+            showToast('¡Enlace del Overlay copiado al portapapeles!');
+        });
+
+        // Mostrar Toast
         function showToast(text, isError = false) {
             toastMsg.innerText = text;
             if (isError) {
@@ -689,7 +1476,28 @@
             toastBox.classList.add('show');
             setTimeout(() => {
                 toastBox.classList.remove('show');
-            }, 3000);
+            }, 3500);
+        }
+
+        // Agregar entrada en el widget de Eventos Recientes (Sidebar)
+        function logEvent(text, type = 'info') {
+            // Eliminar placeholder de "esperando..." si existe
+            const placeholder = eventLogContainer.querySelector('div[style*="text-muted"]');
+            if (placeholder) {
+                eventLogContainer.innerHTML = '';
+            }
+
+            const entry = document.createElement('div');
+            entry.className = `event-entry ${type}`;
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            entry.innerHTML = `<span class="event-time">${time}</span><span class="event-text">${text}</span>`;
+            
+            eventLogContainer.insertBefore(entry, eventLogContainer.firstChild);
+
+            // Cap a 30 elementos
+            while (eventLogContainer.children.length > 30) {
+                eventLogContainer.removeChild(eventLogContainer.lastChild);
+            }
         }
 
         // Cargar Configuración de Alertas
@@ -697,8 +1505,7 @@
             try {
                 const res = await fetch('/api/alerts-config');
                 currentAlerts = await res.json();
-                renderTable();
-                updateSimSelect();
+                renderGiftsGrid();
             } catch (e) {
                 showToast('Error cargando la configuración de alertas', true);
             }
@@ -715,25 +1522,22 @@
             }
         }
 
-        // Renderizar la tabla de alertas
-        function renderTable() {
-            alertsTableBody.innerHTML = '';
+        // Renderizar la grilla de regalos en formato de Tarjetas TikPop
+        function renderGiftsGrid() {
+            giftsGridContainer.innerHTML = '';
             alertCount.innerText = `${currentAlerts.length} configurados`;
             
             if (currentAlerts.length === 0) {
-                alertsTableBody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No hay alertas configuradas. Añade una nueva.</td></tr>`;
+                giftsGridContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 3rem;">No hay alertas de regalo configuradas. Selecciona un regalo arriba y añádelo.</div>`;
                 return;
             }
 
             currentAlerts.forEach((item, index) => {
-                const tr = document.createElement('tr');
-
-                // Resolver URL de imagen
-                let imgHtml = '';
-                if (item.imageUrl) {
-                    imgHtml = `<img src="${item.imageUrl}" style="width: 36px; height: 36px; object-fit: contain; border-radius: 8px; background-color: rgba(255,255,255,0.05); padding: 4px; border: 1px solid rgba(255,255,255,0.1);" alt="${item.giftName}">`;
-                } else {
-                    const normalized = item.giftName.toLowerCase().trim();
+                const normalized = item.giftName.toLowerCase().trim();
+                
+                // Resolver imagen de regalo por defecto si no tiene ruta explícita
+                let imgSrc = item.imageUrl || '';
+                if (!imgSrc) {
                     let filename = '';
                     if (normalized === 'rose') filename = 'rose.webp';
                     else if (normalized === 'ice cream cone') filename = 'Ice Cream Cone.webp';
@@ -744,75 +1548,210 @@
                     else if (normalized === 'oldies') filename = 'Oldies.webp';
                     else if (normalized === 'love you so much') filename = 'Love you so much.webp';
                     
-                    if (filename) {
-                        imgHtml = `<img src="gifts/img/${filename}" style="width: 36px; height: 36px; object-fit: contain; border-radius: 8px; background-color: rgba(255,255,255,0.05); padding: 4px; border: 1px solid rgba(255,255,255,0.1);" alt="${item.giftName}">`;
-                    } else {
-                        imgHtml = `<div style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background-color: rgba(255,255,255,0.05); border-radius: 8px; color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-gift"></i></div>`;
-                    }
+                    imgSrc = filename ? `gifts/img/${filename}` : 'avatar/default.png';
                 }
 
-                tr.innerHTML = `
-                    <td style="vertical-align: middle;">
-                        <div style="display: flex; align-items: center; gap: 0.85rem;">
-                            ${imgHtml}
-                            <span style="font-weight: 600; text-transform: capitalize;">${item.giftName}</span>
+                // Generar las opciones del selector de videos locales
+                let videoOptionsHtml = '';
+                AVAILABLE_VIDEOS.forEach(v => {
+                    const videoPath = `gifts/videos/${v}`;
+                    const isSelected = item.videoUrl === videoPath ? 'selected' : '';
+                    videoOptionsHtml += `<option value="${videoPath}" ${isSelected}>${v}</option>`;
+                });
+                // Añadir opción personalizada si el videoUrl no coincide con los disponibles
+                const isCustomVideo = !AVAILABLE_VIDEOS.some(v => `gifts/videos/${v}` === item.videoUrl);
+                if (isCustomVideo && item.videoUrl) {
+                    videoOptionsHtml += `<option value="${item.videoUrl}" selected>${item.videoUrl}</option>`;
+                }
+
+                // Generar las opciones del selector de imágenes locales
+                let imageOptionsHtml = '';
+                AVAILABLE_IMAGES.forEach(img => {
+                    const imgPath = `gifts/img/${img}`;
+                    const isSelected = item.imageUrl === imgPath ? 'selected' : '';
+                    imageOptionsHtml += `<option value="${imgPath}" ${isSelected}>${img}</option>`;
+                });
+                const isCustomImage = item.imageUrl && !AVAILABLE_IMAGES.some(img => `gifts/img/${img}` === item.imageUrl);
+                if (isCustomImage && item.imageUrl) {
+                    imageOptionsHtml += `<option value="${item.imageUrl}" selected>${item.imageUrl}</option>`;
+                }
+
+                // Crear tarjeta
+                const card = document.createElement('div');
+                card.className = 'gift-card';
+                card.innerHTML = `
+                    <div class="gift-card-header">
+                        <div class="gift-info">
+                            <img src="${imgSrc}" class="gift-avatar" alt="${item.giftName}" onerror="this.src='avatar/default.png';">
+                            <div class="gift-details">
+                                <h4 style="text-transform: capitalize;">${item.giftName}</h4>
+                                <span><i class="fa-solid fa-coins"></i> 1 coins</span>
+                            </div>
                         </div>
-                    </td>
-                    <td style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem; vertical-align: middle;">${item.videoUrl}</td>
-                    <td class="actions-cell" style="vertical-align: middle;">
-                        <button class="btn btn-secondary btn-mini" onclick="simulateRow(${index})">
-                            <i class="fa-solid fa-play"></i> Simular
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span>Combo (ms)</span>
+                            <span class="combo-label-${index}">3000ms</span>
+                        </div>
+                        <input type="range" class="range-slider" min="500" max="10000" step="500" value="3000" 
+                            oninput="document.querySelector('.combo-label-${index}').innerText = this.value + 'ms'">
+                    </div>
+
+                    <div class="media-sub-grid">
+                        <!-- MP3 Config -->
+                        <div class="media-box">
+                            <div class="media-box-header">
+                                <label><input type="checkbox"> MP3</label>
+                                <span class="vol-label-mp3-${index}">50%</span>
+                            </div>
+                            <button class="btn-upload-mock">Subir</button>
+                            <span class="media-filename">Sin archivo</span>
+                            <input type="range" class="range-slider" min="0" max="100" value="50" disabled>
+                        </div>
+
+                        <!-- Video Config (Dropdown selector) -->
+                        <div class="media-box">
+                            <div class="media-box-header">
+                                <label><input type="checkbox" checked> Video</label>
+                                <span class="vol-label-vid-${index}">70%</span>
+                            </div>
+                            
+                            <!-- Video Selector -->
+                            <select class="select-input" style="padding: 4px 6px; font-size: 0.75rem; border-radius: 6px; height: 28px;"
+                                onchange="updateGiftVideo(${index}, this.value)">
+                                ${videoOptionsHtml}
+                            </select>
+                            
+                            <span class="media-filename" style="margin-top: 2px;">${item.videoUrl.split('/').pop()}</span>
+                            <input type="range" class="range-slider" min="0" max="100" value="70" 
+                                oninput="document.querySelector('.vol-label-vid-${index}').innerText = this.value + '%'">
+                        </div>
+                    </div>
+
+                    <div class="gift-card-actions">
+                        <button class="btn-probar" onclick="simulateRow(${index})">
+                            <i class="fa-solid fa-play"></i> Probar
                         </button>
-                        <button class="btn btn-primary btn-mini" onclick="openEditModal(${index})">
-                            <i class="fa-solid fa-pen"></i> Editar
+                        <button class="btn-action-small" onclick="openEditModal(${index})" title="Editar rutas manuales">
+                            <i class="fa-solid fa-sliders"></i>
                         </button>
-                        <button class="btn btn-danger btn-mini" onclick="deleteRow(${index})">
-                            <i class="fa-solid fa-trash"></i>
+                        <button class="btn-action-small delete" onclick="deleteRow(${index})" title="Eliminar Alerta">
+                            <i class="fa-solid fa-trash-can"></i>
                         </button>
-                    </td>
+                    </div>
                 `;
-                alertsTableBody.appendChild(tr);
+                giftsGridContainer.appendChild(card);
             });
         }
 
-        // Actualizar el desplegable de simulación
-        function updateSimSelect() {
-            simGiftSelect.innerHTML = '';
-            currentAlerts.forEach(item => {
-                const opt = document.createElement('option');
-                opt.value = item.giftName;
-                opt.innerText = item.giftName;
-                simGiftSelect.appendChild(opt);
-            });
+        // Actualizar video del regalo directamente desde el dropdown de la tarjeta
+        function updateGiftVideo(index, value) {
+            currentAlerts[index].videoUrl = value;
+            showToast('Video cambiado. Haz clic en "Guardar Todo" para salvar en disco.');
         }
 
-        // Eliminar fila de la tabla (Local)
+        // Añadir regalo desde el selector superior
+        document.getElementById('addNewGiftBtn').addEventListener('click', () => {
+            const select = document.getElementById('giftAddSelect');
+            const giftName = select.value;
+            
+            // Evitar duplicados
+            const exists = currentAlerts.some(a => a.giftName.toLowerCase() === giftName.toLowerCase());
+            if (exists) {
+                showToast(`La alerta para "${giftName}" ya está configurada.`, true);
+                return;
+            }
+
+            // Mapear archivos por defecto según el regalo seleccionado
+            let videoUrl = 'gifts/videos/rosa.mp4';
+            let imageUrl = 'gifts/img/rose.webp';
+
+            if (giftName === 'rose') {
+                videoUrl = 'gifts/videos/rosa.mp4';
+                imageUrl = 'gifts/img/rose.webp';
+            } else if (giftName === 'ice cream cone') {
+                videoUrl = 'gifts/videos/helado.mp4';
+                imageUrl = 'gifts/img/Ice Cream Cone.webp';
+            } else if (giftName === 'wink wink') {
+                videoUrl = 'gifts/videos/wink wink.mp4';
+                imageUrl = 'gifts/img/Wink wink.webp';
+            } else if (giftName === 'glow stick') {
+                videoUrl = 'gifts/videos/glow stick.mp4';
+                imageUrl = 'gifts/img/glow stick.webp';
+            } else if (giftName === 'tiktok') {
+                videoUrl = 'gifts/videos/tiktok.mp4';
+                imageUrl = 'gifts/img/TikTok.webp';
+            } else if (giftName === 'pop') {
+                videoUrl = 'gifts/videos/pop.mp4';
+                imageUrl = 'gifts/img/Pop.webp';
+            } else if (giftName === 'oldies') {
+                videoUrl = 'gifts/videos/oldies.mp4';
+                imageUrl = 'gifts/img/Oldies.webp';
+            } else if (giftName === 'love you so much') {
+                videoUrl = 'gifts/videos/Love you so much.mp4';
+                imageUrl = 'gifts/img/Love you so much.webp';
+            }
+
+            const newId = String(Date.now());
+            currentAlerts.push({
+                id: newId,
+                giftName: giftName,
+                videoUrl: videoUrl,
+                imageUrl: imageUrl
+            });
+
+            renderGiftsGrid();
+            showToast(`Añadido "${giftName}". Recuerda presionar "Guardar Todo".`);
+        });
+
+        // Eliminar fila/tarjeta de la lista
         function deleteRow(index) {
-            if (confirm(`¿Estás seguro de eliminar la alerta para "${currentAlerts[index].giftName}"?`)) {
+            const name = currentAlerts[index].giftName;
+            if (confirm(`¿Estás seguro de eliminar la alerta para "${name}"?`)) {
                 currentAlerts.splice(index, 1);
-                renderTable();
-                updateSimSelect();
-                showToast('Alerta eliminada. Haz clic en "Guardar Todo" para aplicar los cambios.');
+                renderGiftsGrid();
+                showToast(`Alerta de "${name}" removida. Guarda los cambios para aplicar.`);
             }
         }
 
-        // Modal de edición / creación
-        function openEditModal(index = -1) {
-            editingIndex = index;
-            if (index === -1) {
-                modalTitle.innerText = 'Añadir Nuevo Regalo';
-                editId.value = '';
-                editGiftName.value = '';
-                editVideoUrl.value = 'gifts/videos/';
-                editImageUrl.value = 'gifts/img/';
-            } else {
-                const item = currentAlerts[index];
-                modalTitle.innerText = 'Editar Mapeo';
-                editId.value = item.id || '';
-                editGiftName.value = item.giftName;
-                editVideoUrl.value = item.videoUrl || '';
-                editImageUrl.value = item.imageUrl || '';
+        // Simular regalo de fila específica
+        function simulateRow(index) {
+            const item = currentAlerts[index];
+            triggerSimulation(item.giftName, 'Jaime Flores', 1);
+        }
+
+        // Disparador de simulación hacia el backend
+        async function triggerSimulation(giftName, user, count = 1) {
+            try {
+                // Generar un ID de foto aleatorio del 1 al 70
+                const randImgId = Math.floor(Math.random() * 70) + 1;
+                const avatarUrl = `https://i.pravatar.cc/100?img=${randImgId}`;
+                
+                const res = await fetch(`/test-gift?name=${encodeURIComponent(giftName)}&user=${encodeURIComponent(user)}&count=${count}&avatar=${encodeURIComponent(avatarUrl)}`);
+                if (res.ok) {
+                    showToast(`Simulación de regalo enviada: ${count}x "${giftName}" por @${user}`);
+                } else {
+                    showToast('Error al enviar simulación', true);
+                }
+            } catch (e) {
+                showToast('Error de conexión al simular', true);
             }
+        }
+
+        // Modal de edición / creación manual
+        function openEditModal(index) {
+            editingIndex = index;
+            const item = currentAlerts[index];
+            modalTitle.innerText = `Rutas de "${item.giftName}"`;
+            editId.value = item.id || '';
+            editVideoUrl.value = item.videoUrl || '';
+            editImageUrl.value = item.imageUrl || '';
             editModalOverlay.classList.add('active');
         }
 
@@ -822,33 +1761,23 @@
 
         // Confirmar guardado de Modal
         document.getElementById('saveModalBtn').addEventListener('click', () => {
-            const gift = editGiftName.value.trim().toLowerCase();
             const video = editVideoUrl.value.trim();
             const image = editImageUrl.value.trim();
 
-            if (!gift || !video) {
-                showToast('Por favor completa todos los campos', true);
+            if (!video) {
+                showToast('La ruta del video es requerida', true);
                 return;
             }
 
-            if (editingIndex === -1) {
-                // Nuevo
-                const newId = String(Date.now());
-                currentAlerts.push({ id: newId, giftName: gift, videoUrl: video, imageUrl: image });
-            } else {
-                // Editando
-                currentAlerts[editingIndex].giftName = gift;
-                currentAlerts[editingIndex].videoUrl = video;
-                currentAlerts[editingIndex].imageUrl = image;
-            }
+            currentAlerts[editingIndex].videoUrl = video;
+            currentAlerts[editingIndex].imageUrl = image;
 
-            renderTable();
-            updateSimSelect();
+            renderGiftsGrid();
             closeEditModal();
-            showToast('Cambio realizado localmente. No olvides presionar "Guardar Todo" para salvar en disco.');
+            showToast('Rutas actualizadas. No olvides presionar "Guardar Todo".');
         });
 
-        // Guardar todo en backend (CRUD - Save)
+        // Guardar todo en backend (POST)
         document.getElementById('saveAllConfigsBtn').addEventListener('click', async () => {
             try {
                 const res = await fetch('/api/alerts-config', {
@@ -864,78 +1793,6 @@
                 }
             } catch (e) {
                 showToast('Error al enviar la petición al servidor', true);
-            }
-        });
-
-        // Simular regalo de fila específica
-        function simulateRow(index) {
-            const item = currentAlerts[index];
-            const testUser = document.getElementById('simUserField').value.trim() || 'espectador_VIP';
-            const count = parseInt(document.getElementById('simGiftCount').value) || 1;
-            triggerSimulation(item.giftName, testUser, count);
-        }
-
-        // Simular regalo desde Sidebar
-        document.getElementById('simulateAlertBtn').addEventListener('click', () => {
-            const giftName = simGiftSelect.value;
-            const testUser = document.getElementById('simUserField').value.trim() || 'espectador_VIP';
-            const count = parseInt(document.getElementById('simGiftCount').value) || 1;
-            if (!giftName) {
-                showToast('No hay regalos mapeados para simular.', true);
-                return;
-            }
-            triggerSimulation(giftName, testUser, count);
-        });
-
-        async function triggerSimulation(giftName, user, count = 1) {
-            try {
-                // Generar un ID de foto aleatorio del 1 al 70 para variar las fotos de perfil en el test
-                const randImgId = Math.floor(Math.random() * 70) + 1;
-                const avatarUrl = `https://i.pravatar.cc/100?img=${randImgId}`;
-                
-                const res = await fetch(`/test-gift?name=${encodeURIComponent(giftName)}&user=${encodeURIComponent(user)}&count=${count}&avatar=${encodeURIComponent(avatarUrl)}`);
-                if (res.ok) {
-                    showToast(`Simulación enviada: ${count}x "${giftName}" por @${user}`);
-                } else {
-                    showToast('Error al enviar simulación', true);
-                }
-            } catch (e) {
-                showToast('Error de conexión al simular', true);
-            }
-        }
-
-        // Simular comentario de chat desde Sidebar
-        document.getElementById('simulateChatBtn').addEventListener('click', async () => {
-            const testUser = document.getElementById('simUserField').value.trim() || 'espectador_VIP';
-            const comment = document.getElementById('simCommentField').value.trim();
-            if (!comment) {
-                showToast('Por favor escribe un mensaje o comando de chat', true);
-                return;
-            }
-            try {
-                const res = await fetch(`/test-chat?user=${encodeURIComponent(testUser)}&comment=${encodeURIComponent(comment)}`);
-                if (res.ok) {
-                    showToast(`Simulación de chat enviada: @${testUser}: "${comment}"`);
-                } else {
-                    showToast('Error al enviar simulación de chat', true);
-                }
-            } catch (e) {
-                showToast('Error de conexión al simular chat', true);
-            }
-        });
-
-        // Simular seguidor desde Sidebar
-        document.getElementById('simulateFollowBtn').addEventListener('click', async () => {
-            const testUser = document.getElementById('simUserField').value.trim() || 'nuevo_seguidor';
-            try {
-                const res = await fetch(`/test-follow?user=${encodeURIComponent(testUser)}`);
-                if (res.ok) {
-                    showToast(`Simulación de seguidor enviada: @${testUser}`);
-                } else {
-                    showToast('Error al enviar simulación de seguidor', true);
-                }
-            } catch (e) {
-                showToast('Error de conexión al simular seguidor', true);
             }
         });
 
@@ -963,31 +1820,101 @@
             }
         });
 
+        // Botón Salir Completamente (Mockup/Info)
+        document.getElementById('exitBtn').addEventListener('click', () => {
+            if (confirm('¿Estás seguro de que deseas salir del panel de control? Esto cerrará tu interfaz local.')) {
+                window.close();
+            }
+        });
+
         // Eventos de botones cerrar Modal
         document.getElementById('closeModalBtn').addEventListener('click', closeEditModal);
         document.getElementById('cancelModalBtn').addEventListener('click', closeEditModal);
-        document.getElementById('addNewBtn').addEventListener('click', () => openEditModal(-1));
 
-        // Socket.io para estado en tiempo real
+        // Socket.io para estado y eventos en tiempo real
         const socket = io('http://localhost:3000');
         
         socket.on('connect', () => {
             console.log('Control panel connected to socket.io');
+            logEvent('Panel conectado con éxito al servidor local.', 'info');
         });
 
         socket.on('server_status', (data) => {
             if (data.connected) {
-                connectionDot.classList.add('active');
-                connectionText.innerText = `Conectado a @${data.tiktokUsername}`;
+                connectionDot.classList.add('connected');
+                connectionText.innerText = `Conectado: @${data.tiktokUsername}`;
+                document.getElementById('saveUserBtn').innerText = 'Actualizar';
+                document.getElementById('saveUserBtn').classList.remove('btn-accent');
+                document.getElementById('saveUserBtn').style.backgroundColor = 'rgba(34, 197, 94, 0.15)';
+                document.getElementById('saveUserBtn').style.color = '#22c55e';
+                document.getElementById('saveUserBtn').style.border = '1px solid rgba(34, 197, 94, 0.3)';
+                document.getElementById('saveUserBtn').style.boxShadow = 'none';
             } else {
-                connectionDot.classList.remove('active');
-                connectionText.innerText = `Desconectado (Reintentando @${data.tiktokUsername}...)`;
+                connectionDot.classList.remove('connected');
+                connectionText.innerText = `Buscando a @${data.tiktokUsername}...`;
+                document.getElementById('saveUserBtn').innerText = 'Conectar';
+                document.getElementById('saveUserBtn').classList.add('btn-accent');
+                document.getElementById('saveUserBtn').style.backgroundColor = '';
+                document.getElementById('saveUserBtn').style.color = '';
+                document.getElementById('saveUserBtn').style.border = '';
             }
+        });
+
+        // Escuchar eventos en vivo retransmitidos por el servidor y agregarlos al registro de eventos
+        socket.on('chat', (data) => {
+            logEvent(`💬 <strong>@${data.username}</strong>: "${data.comment}"`, 'chat');
+        });
+
+        socket.on('gift', (data) => {
+            logEvent(`🎁 <strong>@${data.username}</strong> envió ${data.repeatCount}x <strong>${data.giftName}</strong>`, 'gift');
+        });
+
+        socket.on('follow', (data) => {
+            logEvent(`👤 <strong>@${data.username}</strong> te comenzó a seguir!`, 'follow');
+        });
+
+        socket.on('share', (data) => {
+            logEvent(`🔗 <strong>@${data.username}</strong> compartió la transmisión!`, 'share');
         });
 
         // Carga inicial
         fetchAlertsConfig();
         fetchTikTokUser();
+
+        // Simular Follow
+        document.getElementById('btnSimulateFollow').addEventListener('click', async () => {
+            const username = document.getElementById('simFollowUser').value.trim() || 'seguidor_VIP';
+            try {
+                const res = await fetch(`/test-follow?user=${encodeURIComponent(username)}`);
+                if (res.ok) {
+                    showToast(`Simulación de seguidor enviada: @${username}`);
+                } else {
+                    showToast('Error al enviar simulación de seguidor', true);
+                }
+            } catch (e) {
+                showToast('Error de conexión al simular seguidor', true);
+            }
+        });
+
+        // Simular Chat
+        document.getElementById('btnSimulateChat').addEventListener('click', async () => {
+            const comment = document.getElementById('simChatMessage').value.trim();
+            if (!comment) {
+                showToast('El comentario no puede estar vacío', true);
+                return;
+            }
+            try {
+                const username = 'espectador_VIP';
+                const res = await fetch(`/test-chat?comment=${encodeURIComponent(comment)}&user=${encodeURIComponent(username)}`);
+                if (res.ok) {
+                    showToast(`Simulación de chat enviada: "${comment}"`);
+                } else {
+                    showToast('Error al enviar simulación de chat', true);
+                }
+            } catch (e) {
+                showToast('Error de conexión al simular chat', true);
+            }
+        });
 
     </script>
 </body>
