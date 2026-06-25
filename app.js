@@ -913,6 +913,18 @@ function queueGiftAlert(username, giftName, profilePictureUrl, repeatCount) {
     processNextGift();
 }
 
+function queueFollowAlert(username, profilePictureUrl) {
+    const videoUrl = '/gifts/videos/follow.mp4';
+    giftQueue.push({ username, giftName: 'follow_event', videoUrl, profilePictureUrl, repeatCount: 1 });
+    processNextGift();
+}
+
+function queueShareAlert(username, profilePictureUrl) {
+    const videoUrl = '/gifts/videos/share.mp4';
+    giftQueue.push({ username, giftName: 'share_event', videoUrl, profilePictureUrl, repeatCount: 1 });
+    processNextGift();
+}
+
 function processNextGift() {
     if (isProcessingGift || giftQueue.length === 0) return;
 
@@ -954,14 +966,26 @@ function processNextGift() {
     // Configurar mensaje de agradecimiento interactivo
     if (msgEl) {
         const count = alert.repeatCount || 1;
-        const normalizedGiftName = alert.giftName.charAt(0).toUpperCase() + alert.giftName.slice(1);
-        msgEl.innerHTML = `¡Muchas gracias por el regalo!<br><span>${count}x ${normalizedGiftName}</span>`;
+        if (alert.giftName === 'follow_event') {
+            msgEl.innerHTML = `¡Muchas gracias por seguirnos!<br><span>Nuevo Seguidor</span>`;
+        } else if (alert.giftName === 'share_event') {
+            msgEl.innerHTML = `¡Muchas gracias por compartir!<br><span>Compartió el directo</span>`;
+        } else {
+            const normalizedGiftName = alert.giftName.charAt(0).toUpperCase() + alert.giftName.slice(1);
+            msgEl.innerHTML = `¡Muchas gracias por el regalo!<br><span>${count}x ${normalizedGiftName}</span>`;
+        }
     }
     
     // Texto de respaldo clásico
     if (textEl) {
-        const displayGift = alert.giftName.toUpperCase();
-        textEl.innerHTML = `@${alert.username} <span>TE ENVIÓ UN REGALO: ${displayGift}!</span>`;
+        if (alert.giftName === 'follow_event') {
+            textEl.innerHTML = `@${alert.username} <span>TE EMPEZÓ A SEGUIR!</span>`;
+        } else if (alert.giftName === 'share_event') {
+            textEl.innerHTML = `@${alert.username} <span>COMPARTIÓ EL DIRECTO!</span>`;
+        } else {
+            const displayGift = alert.giftName.toUpperCase();
+            textEl.innerHTML = `@${alert.username} <span>TE ENVIÓ UN REGALO: ${displayGift}!</span>`;
+        }
     }
 
     // Activar overlay (animación de entrada por CSS)
@@ -1049,6 +1073,12 @@ if (typeof io !== 'undefined') {
             tickerFollowUser.innerHTML = `<span class="text-cyan">@${data.username}</span>`;
         }
         showToast(`👤 @${data.username} te empezó a seguir!`);
+        queueFollowAlert(data.username, data.profilePictureUrl);
+    });
+
+    socket.on('share', (data) => {
+        showToast(`🔗 @${data.username} compartió la transmisión`);
+        queueShareAlert(data.username, data.profilePictureUrl);
     });
 
     socket.on('chat', (data) => {

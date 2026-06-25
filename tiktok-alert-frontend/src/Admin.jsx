@@ -788,9 +788,111 @@ export default function Admin() {
                       <code style={{ color: 'var(--accent-cyan)', fontWeight: 'bold', marginLeft: '5px' }}>!viz wave</code>,
                       <code style={{ color: 'var(--accent-cyan)', fontWeight: 'bold', marginLeft: '5px' }}>!tema claro</code>.
                     </p>
+
+                    <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Colores Rápidos:</span>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                          {['rojo', 'azul', 'verde', 'rosa', 'morado', 'amarillo', 'celeste'].map(col => (
+                            <button 
+                              key={col} 
+                              className="btn btn-shortcut" 
+                              onClick={() => handleSimulateChat(`!color ${col}`)}
+                              style={{ 
+                                padding: '3px 8px', 
+                                fontSize: '0.7rem', 
+                                borderRadius: '6px', 
+                                border: '1px solid rgba(255,255,255,0.08)', 
+                                background: 'rgba(255,255,255,0.04)', 
+                                color: 'var(--text-main)', 
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                                e.currentTarget.style.borderColor = 'var(--accent-cyan)';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                              }}
+                            >
+                              !color {col}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Visualizadores Rápidos:</span>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                          {['led', 'bars', 'wave'].map(viz => (
+                            <button 
+                              key={viz} 
+                              className="btn btn-shortcut" 
+                              onClick={() => handleSimulateChat(`!viz ${viz}`)}
+                              style={{ 
+                                padding: '3px 8px', 
+                                fontSize: '0.7rem', 
+                                borderRadius: '6px', 
+                                border: '1px solid rgba(255,255,255,0.08)', 
+                                background: 'rgba(255,255,255,0.04)', 
+                                color: 'var(--text-main)', 
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                                e.currentTarget.style.borderColor = 'var(--accent-cyan)';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                              }}
+                            >
+                              !viz {viz}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Temas Rápidos:</span>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                          {['claro', 'oscuro'].map(tema => (
+                            <button 
+                              key={tema} 
+                              className="btn btn-shortcut" 
+                              onClick={() => handleSimulateChat(`!tema ${tema}`)}
+                              style={{ 
+                                padding: '3px 8px', 
+                                fontSize: '0.7rem', 
+                                borderRadius: '6px', 
+                                border: '1px solid rgba(255,255,255,0.08)', 
+                                background: 'rgba(255,255,255,0.04)', 
+                                color: 'var(--text-main)', 
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                                e.currentTarget.style.borderColor = 'var(--accent-cyan)';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.background = 'rgba(255,255,255,0.04)';
+                                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                              }}
+                            >
+                              !tema {tema}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="form-row" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', marginTop: '0.8rem' }}>
                       <div className="form-group" style={{ flex: 2 }}>
-                        <label>Mensaje de Chat / Comando</label>
+                        <label>Mensaje de Chat / Comando Manual</label>
                         <input 
                           type="text" 
                           className="text-input" 

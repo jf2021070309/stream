@@ -102,6 +102,22 @@
 
                 <!-- Bottom Group (Visualizer, meta, controls, status) -->
                 <div class="rx-player-bottom-group">
+                    <div class="rx-meta">
+                        <div class="rx-live-label">
+                            <span class="rx-dot" id="liveDot"></span>
+                            Estás Escuchando
+                        </div>
+
+                        <div class="rx-track" id="trackInfo">
+                            <i class="fas fa-music rx-track-icon"></i>
+                            <div class="rx-track-scroller">
+                                <div class="rx-track-content">
+                                    <span id="trackText">Sintonizando señal...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Enhanced Visualizer Area (Central Position) -->
                     <div class="rx-viz-layout-wrapper">
                         <!-- Lateral izquierdo (Tarjeta de Regalos) -->
@@ -143,22 +159,6 @@
                             <div class="rx-side-body">
                                 <video id="rightGiftVideo" class="rx-side-video" muted playsinline></video>
                                 <div id="rightGiftUser" class="rx-side-username"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="rx-meta">
-                        <div class="rx-live-label">
-                            <span class="rx-dot" id="liveDot"></span>
-                            Estás Escuchando
-                        </div>
-
-                        <div class="rx-track" id="trackInfo">
-                            <i class="fas fa-music rx-track-icon"></i>
-                            <div class="rx-track-scroller">
-                                <div class="rx-track-content">
-                                    <span id="trackText">Sintonizando señal...</span>
-                                </div>
                             </div>
                         </div>
                     </div>
