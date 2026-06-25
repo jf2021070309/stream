@@ -544,7 +544,7 @@
                 </div>
                 
                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
-                    Asocia el nombre del regalo en TikTok (en inglés o español) con tu archivo de video de alerta y la columna del reproductor en la que debe aparecer.
+                    Asocia el nombre del regalo en TikTok con tu archivo de video de alerta.
                 </p>
 
                 <div class="table-container">
@@ -553,7 +553,6 @@
                             <tr>
                                 <th>Regalo</th>
                                 <th>Ruta del Video</th>
-                                <th>Columna</th>
                                 <th style="text-align: right;">Acciones</th>
                             </tr>
                         </thead>
@@ -603,14 +602,6 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="editColumn">Columna en Pantalla</label>
-                <select id="editColumn">
-                    <option value="right">1 Coins (Derecha - Rosa, Helado, Tiktok)</option>
-                    <option value="left">Gifts (Izquierda - Corazones)</option>
-                </select>
-            </div>
-
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancelModalBtn">Cancelar</button>
                 <button class="btn btn-primary" id="saveModalBtn">Confirmar</button>
@@ -645,7 +636,6 @@
         const editId = document.getElementById('editId');
         const editGiftName = document.getElementById('editGiftName');
         const editVideoUrl = document.getElementById('editVideoUrl');
-        const editColumn = document.getElementById('editColumn');
 
         // Toast Elementos
         const toastBox = document.getElementById('toastBox');
@@ -695,21 +685,16 @@
             alertCount.innerText = `${currentAlerts.length} configurados`;
             
             if (currentAlerts.length === 0) {
-                alertsTableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No hay alertas configuradas. Añade una nueva.</td></tr>`;
+                alertsTableBody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No hay alertas configuradas. Añade una nueva.</td></tr>`;
                 return;
             }
 
             currentAlerts.forEach((item, index) => {
                 const tr = document.createElement('tr');
-                
-                const isRight = item.column === 'right';
-                const badgeClass = isRight ? 'badge-right' : 'badge-left';
-                const badgeLabel = isRight ? '1 Coins (Derecha)' : 'Gifts (Izquierda)';
 
                 tr.innerHTML = `
                     <td style="font-weight: 600;">${item.giftName}</td>
                     <td style="color: var(--text-muted); font-family: monospace; font-size: 0.85rem;">${item.videoUrl}</td>
-                    <td><span class="column-badge ${badgeClass}">${badgeLabel}</span></td>
                     <td class="actions-cell">
                         <button class="btn btn-secondary btn-mini" onclick="simulateRow(${index})">
                             <i class="fa-solid fa-play"></i> Simular
@@ -732,7 +717,7 @@
             currentAlerts.forEach(item => {
                 const opt = document.createElement('option');
                 opt.value = item.giftName;
-                opt.innerText = `${item.giftName} (${item.column === 'right' ? 'Derecha' : 'Izquierda'})`;
+                opt.innerText = item.giftName;
                 simGiftSelect.appendChild(opt);
             });
         }
@@ -755,14 +740,12 @@
                 editId.value = '';
                 editGiftName.value = '';
                 editVideoUrl.value = 'gifts/';
-                editColumn.value = 'right';
             } else {
                 const item = currentAlerts[index];
                 modalTitle.innerText = 'Editar Mapeo';
                 editId.value = item.id || '';
                 editGiftName.value = item.giftName;
                 editVideoUrl.value = item.videoUrl;
-                editColumn.value = item.column;
             }
             editModalOverlay.classList.add('active');
         }
@@ -775,7 +758,6 @@
         document.getElementById('saveModalBtn').addEventListener('click', () => {
             const gift = editGiftName.value.trim().toLowerCase();
             const video = editVideoUrl.value.trim();
-            const col = editColumn.value;
 
             if (!gift || !video) {
                 showToast('Por favor completa todos los campos', true);
@@ -785,12 +767,11 @@
             if (editingIndex === -1) {
                 // Nuevo
                 const newId = String(Date.now());
-                currentAlerts.push({ id: newId, giftName: gift, videoUrl: video, column: col });
+                currentAlerts.push({ id: newId, giftName: gift, videoUrl: video });
             } else {
                 // Editando
                 currentAlerts[editingIndex].giftName = gift;
                 currentAlerts[editingIndex].videoUrl = video;
-                currentAlerts[editingIndex].column = col;
             }
 
             renderTable();

@@ -851,7 +851,6 @@ setVizMode(currentVizMode);
 
 // ─── INTEGRACIÓN DE ALERTAS DE REGALOS EN VIVO CON TIKTOK ───
 let GIFT_VIDEO_MAP = {};
-let RIGHT_COLUMN_GIFTS = [];
 
 async function loadAlertsConfig() {
     try {
@@ -860,14 +859,10 @@ async function loadAlertsConfig() {
         const configData = await res.json();
         
         GIFT_VIDEO_MAP = {};
-        RIGHT_COLUMN_GIFTS = [];
         
         configData.forEach(item => {
             const name = item.giftName.toLowerCase().trim();
             GIFT_VIDEO_MAP[name] = item.videoUrl;
-            if (item.column === 'right') {
-                RIGHT_COLUMN_GIFTS.push(name);
-            }
         });
         console.log('✅ Configuración de alertas cargada dinámicamente:', GIFT_VIDEO_MAP);
     } catch (e) {
@@ -875,16 +870,14 @@ async function loadAlertsConfig() {
         // Configuración por defecto
         GIFT_VIDEO_MAP = {
             'rose': 'gifts/rosa.mp4',
-            'rosa': 'gifts/rosa.mp4',
-            'ice cream': 'gifts/helado.mp4',
-            'helado': 'gifts/helado.mp4',
+            'ice cream cone': 'gifts/helado.mp4',
             'tiktok': 'gifts/tiktok.mp4',
-            'heart': 'gifts/corazon.mp4',
-            'corazon': 'gifts/corazon.mp4',
-            'finger heart': 'gifts/corazon.mp4',
-            'corazón': 'gifts/corazon.mp4'
+            'wink wink': 'gifts/pop.mp4',
+            'glow stick': 'gifts/pop.mp4',
+            'pop': 'gifts/pop.mp4',
+            'oldies': 'gifts/pop.mp4',
+            'love you so much': 'gifts/corazon.mp4'
         };
-        RIGHT_COLUMN_GIFTS = ['rose', 'rosa', 'ice cream', 'helado', 'tiktok'];
     }
 }
 
