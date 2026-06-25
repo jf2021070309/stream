@@ -1927,22 +1927,21 @@
         }
 
         .rx-alert-overlay {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            backdrop-filter: none;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(11, 14, 17, 0.45);
+            backdrop-filter: blur(8px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 150;
+            z-index: 9999;
             opacity: 0;
             pointer-events: none;
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            border-radius: 20px;
         }
 
         .rx-alert-overlay.active {
@@ -1952,16 +1951,14 @@
 
         /* Contenedor del video y texto para animar juntos */
         .rx-alert-video-container {
-            position: relative;
-            width: 90%;
-            max-width: 340px;
-            height: auto;
-            max-height: 75%;
-            border-radius: 12px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.2);
-            transform: scale(0.6) rotate(-3deg);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: scale(1.1);
+            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
             opacity: 0;
             display: flex;
             align-items: center;
@@ -1969,15 +1966,15 @@
         }
 
         .rx-alert-overlay.active .rx-alert-video-container {
-            transform: scale(1) rotate(0deg);
+            transform: scale(1);
             opacity: 1;
         }
 
         .rx-alert-overlay video {
             width: 100%;
-            height: auto;
+            height: 100%;
             display: block;
-            object-fit: contain;
+            object-fit: cover;
         }
 
         /* Capa interactiva encima del video */

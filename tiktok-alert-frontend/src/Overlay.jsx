@@ -792,6 +792,19 @@ export default function Overlay() {
         <img src="/logo%20xero.png" alt="Radio Xero Logo" className="main-logo" />
       </header>
 
+      {/* TikTok Live Alert Overlay (Fullscreen) */}
+      <div className={`rx-alert-overlay ${alertActive ? 'active' : ''}`}>
+        <div className="rx-alert-video-container">
+          <video ref={alertVideoRef} onEnded={finishAlert} muted playsInline></video>
+          
+          <div className="rx-alert-info-layer">
+            <img className="rx-alert-avatar" src={alertAvatar} alt="Avatar" />
+            <div className="rx-alert-username">{alertUser}</div>
+            <div className="rx-alert-message" dangerouslySetInnerHTML={{ __html: alertMsg }}></div>
+          </div>
+        </div>
+      </div>
+
       <div className="main-wrapper">
         {/* ─── LIVE TICKER ─── */}
         <div className="rx-ticker-container">
@@ -817,19 +830,6 @@ export default function Overlay() {
         {/* ─── CUSTOM PLAYER CARD ─── */}
         <section className="card player-card">
           
-          {/* TikTok Live Alert Overlay */}
-          <div className={`rx-alert-overlay ${alertActive ? 'active' : ''}`}>
-            <div className="rx-alert-video-container">
-              <video ref={alertVideoRef} onEnded={finishAlert} muted playsInline></video>
-              
-              <div className="rx-alert-info-layer">
-                <img className="rx-alert-avatar" src={alertAvatar} alt="Avatar" />
-                <div className="rx-alert-username">{alertUser}</div>
-                <div className="rx-alert-message" dangerouslySetInnerHTML={{ __html: alertMsg }}></div>
-              </div>
-            </div>
-          </div>
-
           <div className="rx-player-content">
             {/* Double Avatar Videos Loop */}
             <div className={`rx-small-logo ${!isPlaying ? 'is-paused' : ''}`}>
