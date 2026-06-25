@@ -872,11 +872,11 @@ async function loadAlertsConfig() {
             'rose': 'gifts/videos/rosa.mp4',
             'ice cream cone': 'gifts/videos/helado.mp4',
             'tiktok': 'gifts/videos/tiktok.mp4',
-            'wink wink': 'gifts/videos/pop.mp4',
-            'glow stick': 'gifts/videos/pop.mp4',
+            'wink wink': 'gifts/videos/wink wink.mp4',
+            'glow stick': 'gifts/videos/glow stick.mp4',
             'pop': 'gifts/videos/pop.mp4',
-            'oldies': 'gifts/videos/pop.mp4',
-            'love you so much': 'gifts/videos/corazon.mp4'
+            'oldies': 'gifts/videos/oldies.mp4',
+            'love you so much': 'gifts/videos/Love you so much.mp4'
         };
     }
 }

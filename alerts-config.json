@@ -2,9 +2,9 @@
   { "id": "1", "giftName": "rose", "videoUrl": "gifts/videos/rosa.mp4", "imageUrl": "gifts/img/rose.webp" },
   { "id": "2", "giftName": "ice cream cone", "videoUrl": "gifts/videos/helado.mp4", "imageUrl": "gifts/img/Ice Cream Cone.webp" },
   { "id": "3", "giftName": "tiktok", "videoUrl": "gifts/videos/tiktok.mp4", "imageUrl": "gifts/img/TikTok.webp" },
-  { "id": "4", "giftName": "wink wink", "videoUrl": "gifts/videos/pop.mp4", "imageUrl": "gifts/img/Wink wink.webp" },
-  { "id": "5", "giftName": "glow stick", "videoUrl": "gifts/videos/pop.mp4", "imageUrl": "gifts/img/Glow Stick.webp" },
+  { "id": "4", "giftName": "wink wink", "videoUrl": "gifts/videos/wink wink.mp4", "imageUrl": "gifts/img/Wink wink.webp" },
+  { "id": "5", "giftName": "glow stick", "videoUrl": "gifts/videos/glow stick.mp4", "imageUrl": "gifts/img/Glow Stick.webp" },
   { "id": "6", "giftName": "pop", "videoUrl": "gifts/videos/pop.mp4", "imageUrl": "gifts/img/Pop.webp" },
-  { "id": "7", "giftName": "oldies", "videoUrl": "gifts/videos/pop.mp4", "imageUrl": "gifts/img/Oldies.webp" },
-  { "id": "8", "giftName": "love you so much", "videoUrl": "gifts/videos/corazon.mp4", "imageUrl": "gifts/img/Love you so much.webp" }
+  { "id": "7", "giftName": "oldies", "videoUrl": "gifts/videos/oldies.mp4", "imageUrl": "gifts/img/Oldies.webp" },
+  { "id": "8", "giftName": "love you so much", "videoUrl": "gifts/videos/Love you so much.mp4", "imageUrl": "gifts/img/Love you so much.webp" }
 ]
