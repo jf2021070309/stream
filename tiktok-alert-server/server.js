@@ -114,6 +114,37 @@ app.post('/api/alerts-config', (req, res) => {
     }
 });
 
+// Ruta para obtener la configuración de eventos (Follow / Share)
+app.get('/api/events-config', (req, res) => {
+    const filePath = path.join(__dirname, '../events-config.json');
+    const defaults = {
+        follow: { enabled: true, videoUrl: 'gifts/videos/follow.mp4', soundUrl: '', message: '¡Muchas gracias por seguirnos!', label: 'Nuevo Seguidor' },
+        share:  { enabled: true, videoUrl: 'gifts/videos/share.mp4',  soundUrl: '', message: '¡Muchas gracias por compartir!',  label: 'Compartió el directo' }
+    };
+    if (fs.existsSync(filePath)) {
+        try {
+            const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            return res.json({ ...defaults, ...data });
+        } catch (e) {
+            return res.status(500).json({ error: 'Error al leer events-config.json' });
+        }
+    }
+    return res.json(defaults);
+});
+
+// Ruta para guardar la configuración de eventos (Follow / Share)
+app.post('/api/events-config', (req, res) => {
+    const filePath = path.join(__dirname, '../events-config.json');
+    try {
+        fs.writeFileSync(filePath, JSON.stringify(req.body, null, 2), 'utf8');
+        console.log('📝 Configuración de eventos guardada con éxito.');
+        return res.json({ success: true });
+    } catch (e) {
+        console.error('Error al escribir events-config.json:', e);
+        return res.status(500).json({ error: 'Error al guardar events-config.json' });
+    }
+});
+
 // Obtener usuario de TikTok actual
 app.get('/api/tiktok-username', (req, res) => {
     return res.json({ tiktokUsername: config.tiktokUsername });

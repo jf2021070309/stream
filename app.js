@@ -894,6 +894,30 @@ async function loadAlertsConfig() {
 // Cargar configuración inicialmente
 loadAlertsConfig();
 
+// Configuración de eventos follow y share
+let EVENTS_CONFIG = {
+    follow: { enabled: true, videoUrl: '/gifts/videos/follow.mp4', soundUrl: '', message: '¡Muchas gracias por seguirnos!', label: 'Nuevo Seguidor' },
+    share:  { enabled: true, videoUrl: '/gifts/videos/share.mp4',  soundUrl: '', message: '¡Muchas gracias por compartir!',  label: 'Compartió el directo' }
+};
+
+async function loadEventsConfig() {
+    try {
+        const res = await fetch('/api/events-config');
+        if (!res.ok) return;
+        const data = await res.json();
+        const normalize = url => url && !url.startsWith('/') ? `/${url}` : url;
+        EVENTS_CONFIG = {
+            follow: { ...data.follow, videoUrl: normalize(data.follow.videoUrl) },
+            share:  { ...data.share,  videoUrl: normalize(data.share.videoUrl)  }
+        };
+        console.log('✅ Events config cargada:', EVENTS_CONFIG);
+    } catch (e) {
+        console.warn('Usando events config por defecto:', e);
+    }
+}
+
+loadEventsConfig();
+
 const giftQueue = [];
 let isProcessingGift = false;
 
@@ -914,14 +938,18 @@ function queueGiftAlert(username, giftName, profilePictureUrl, repeatCount) {
 }
 
 function queueFollowAlert(username, profilePictureUrl) {
-    const videoUrl = '/gifts/videos/follow.mp4';
-    giftQueue.push({ username, giftName: 'follow_event', videoUrl, profilePictureUrl, repeatCount: 1 });
+    const cfg = EVENTS_CONFIG.follow;
+    if (!cfg.enabled) return;
+    const videoUrl = cfg.videoUrl || '/gifts/videos/follow.mp4';
+    giftQueue.push({ username, giftName: 'follow_event', videoUrl, soundUrl: cfg.soundUrl || '', message: cfg.message, label: cfg.label, profilePictureUrl, repeatCount: 1 });
     processNextGift();
 }
 
 function queueShareAlert(username, profilePictureUrl) {
-    const videoUrl = '/gifts/videos/share.mp4';
-    giftQueue.push({ username, giftName: 'share_event', videoUrl, profilePictureUrl, repeatCount: 1 });
+    const cfg = EVENTS_CONFIG.share;
+    if (!cfg.enabled) return;
+    const videoUrl = cfg.videoUrl || '/gifts/videos/share.mp4';
+    giftQueue.push({ username, giftName: 'share_event', videoUrl, soundUrl: cfg.soundUrl || '', message: cfg.message, label: cfg.label, profilePictureUrl, repeatCount: 1 });
     processNextGift();
 }
 
@@ -967,9 +995,13 @@ function processNextGift() {
     if (msgEl) {
         const count = alert.repeatCount || 1;
         if (alert.giftName === 'follow_event') {
-            msgEl.innerHTML = `¡Muchas gracias por seguirnos!<br><span>Nuevo Seguidor</span>`;
+            const msg = alert.message || '¡Muchas gracias por seguirnos!';
+            const lbl = alert.label || 'Nuevo Seguidor';
+            msgEl.innerHTML = `${msg}<br><span>${lbl}</span>`;
         } else if (alert.giftName === 'share_event') {
-            msgEl.innerHTML = `¡Muchas gracias por compartir!<br><span>Compartió el directo</span>`;
+            const msg = alert.message || '¡Muchas gracias por compartir!';
+            const lbl = alert.label || 'Compartió el directo';
+            msgEl.innerHTML = `${msg}<br><span>${lbl}</span>`;
         } else {
             const normalizedGiftName = alert.giftName.charAt(0).toUpperCase() + alert.giftName.slice(1);
             msgEl.innerHTML = `¡Muchas gracias por el regalo!<br><span>${count}x ${normalizedGiftName}</span>`;
@@ -990,6 +1022,15 @@ function processNextGift() {
 
     // Activar overlay (animación de entrada por CSS)
     overlayEl.classList.add('active');
+
+    // Reproducir sonido personalizado si está configurado
+    if (alert.soundUrl) {
+        try {
+            const snd = new Audio(alert.soundUrl);
+            snd.volume = 0.8;
+            snd.play().catch(() => {});
+        } catch (e) {}
+    }
 
     // Cargar y reproducir
     videoEl.load();

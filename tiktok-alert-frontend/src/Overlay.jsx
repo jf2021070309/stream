@@ -126,6 +126,30 @@ export default function Overlay() {
     }
   }
 
+  // Fetch Events Config (follow / share)
+  const eventsConfigRef = useRef({
+    follow: { enabled: true, videoUrl: '/gifts/videos/follow.mp4', soundUrl: '', message: '¡Muchas gracias por seguirnos!', label: 'Nuevo Seguidor' },
+    share:  { enabled: true, videoUrl: '/gifts/videos/share.mp4',  soundUrl: '', message: '¡Muchas gracias por compartir!',  label: 'Compartió el directo' }
+  })
+
+  const loadEventsConfig = async () => {
+    try {
+      const res = await fetch('/api/events-config')
+      if (res.ok) {
+        const data = await res.json()
+        // Ensure paths start with /
+        const normalize = url => url && !url.startsWith('/') ? `/${url}` : url
+        eventsConfigRef.current = {
+          follow: { ...data.follow, videoUrl: normalize(data.follow.videoUrl) },
+          share:  { ...data.share,  videoUrl: normalize(data.share.videoUrl)  }
+        }
+        console.log('✅ Eventos configurados:', eventsConfigRef.current)
+      }
+    } catch (e) {
+      console.warn('Usando configuración de eventos por defecto:', e)
+    }
+  }
+
   // Shuffle Helper for Playlist
   const shuffleArray = (array) => {
     const arr = [...array]
@@ -179,7 +203,7 @@ export default function Overlay() {
   // Socket IO Listeners for live events
   useEffect(() => {
     loadAlertsConfig()
-
+    loadEventsConfig()
     const socketServerUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.endsWith('github.io')
       ? 'http://localhost:3000'
       : window.location.origin;
@@ -392,11 +416,16 @@ export default function Overlay() {
   }
 
   const queueFollowAlert = (username, profilePictureUrl) => {
-    const videoUrl = '/gifts/videos/follow.mp4'
+    const cfg = eventsConfigRef.current.follow
+    if (!cfg.enabled) return
+    const videoUrl = cfg.videoUrl || '/gifts/videos/follow.mp4'
     giftQueueRef.current.push({
       username,
       giftName: 'follow_event',
       videoUrl,
+      soundUrl: cfg.soundUrl || '',
+      message: cfg.message || '¡Muchas gracias por seguirnos!',
+      label: cfg.label || 'Nuevo Seguidor',
       profilePictureUrl,
       repeatCount: 1
     })
@@ -404,11 +433,16 @@ export default function Overlay() {
   }
 
   const queueShareAlert = (username, profilePictureUrl) => {
-    const videoUrl = '/gifts/videos/share.mp4'
+    const cfg = eventsConfigRef.current.share
+    if (!cfg.enabled) return
+    const videoUrl = cfg.videoUrl || '/gifts/videos/share.mp4'
     giftQueueRef.current.push({
       username,
       giftName: 'share_event',
       videoUrl,
+      soundUrl: cfg.soundUrl || '',
+      message: cfg.message || '¡Muchas gracias por compartir!',
+      label: cfg.label || 'Compartió el directo',
       profilePictureUrl,
       repeatCount: 1
     })
@@ -434,15 +468,26 @@ export default function Overlay() {
 
     const count = alert.repeatCount || 1
     if (alert.giftName === 'follow_event') {
-      setAlertMsg(`¡Muchas gracias por seguirnos!<br><span>Nuevo Seguidor</span>`)
+      const cfg = eventsConfigRef.current.follow
+      setAlertMsg(`${cfg.message || '¡Muchas gracias por seguirnos!'}<br><span>${cfg.label || 'Nuevo Seguidor'}</span>`)
     } else if (alert.giftName === 'share_event') {
-      setAlertMsg(`¡Muchas gracias por compartir!<br><span>Compartió el directo</span>`)
+      const cfg = eventsConfigRef.current.share
+      setAlertMsg(`${cfg.message || '¡Muchas gracias por compartir!'}<br><span>${cfg.label || 'Compartió el directo'}</span>`)
     } else {
       const normalizedGiftName = alert.giftName.charAt(0).toUpperCase() + alert.giftName.slice(1)
       setAlertMsg(`¡Muchas gracias por el regalo!<br><span>${count}x ${normalizedGiftName}</span>`)
     }
     
     setAlertActive(true)
+
+    // Play extra sound if configured
+    if (alert.soundUrl) {
+      try {
+        const snd = new Audio(alert.soundUrl)
+        snd.volume = 0.8
+        snd.play().catch(() => {})
+      } catch (e) {}
+    }
 
     if (alertVideoRef.current) {
       alertVideoRef.current.src = alert.videoUrl

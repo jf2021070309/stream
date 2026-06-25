@@ -1,0 +1,16 @@
+{
+  "follow": {
+    "enabled": true,
+    "videoUrl": "gifts/videos/follow.mp4",
+    "soundUrl": "",
+    "message": "¡Muchas gracias por seguirnos!",
+    "label": "Nuevo Seguidor"
+  },
+  "share": {
+    "enabled": true,
+    "videoUrl": "gifts/videos/share.mp4",
+    "soundUrl": "",
+    "message": "¡Muchas gracias por compartir!",
+    "label": "Compartió el directo"
+  }
+}

@@ -48,6 +48,13 @@ export default function Admin() {
   const [modalVideoUrl, setModalVideoUrl] = useState('')
   const [modalImageUrl, setModalImageUrl] = useState('')
 
+  // Events config (Follow / Share)
+  const [eventsConfig, setEventsConfig] = useState({
+    follow: { enabled: true, videoUrl: 'gifts/videos/follow.mp4', soundUrl: '', message: '¡Muchas gracias por seguirnos!', label: 'Nuevo Seguidor' },
+    share:  { enabled: true, videoUrl: 'gifts/videos/share.mp4',  soundUrl: '', message: '¡Muchas gracias por compartir!',  label: 'Compartió el directo' }
+  })
+  const [savingEvents, setSavingEvents] = useState(false)
+
   // Simulator tab state
   const [simFollowUser, setSimFollowUser] = useState('espectador_VIP')
   const [simChatMessage, setSimChatMessage] = useState('')
@@ -106,7 +113,36 @@ export default function Admin() {
   useEffect(() => {
     fetchAlertsConfig()
     fetchTikTokUser()
+    fetchEventsConfig()
   }, [])
+
+  const fetchEventsConfig = async () => {
+    try {
+      const res = await fetch('/api/events-config')
+      if (res.ok) setEventsConfig(await res.json())
+    } catch (e) { console.warn('Error cargando events-config', e) }
+  }
+
+  const saveEventsConfig = async () => {
+    setSavingEvents(true)
+    try {
+      const res = await fetch('/api/events-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(eventsConfig)
+      })
+      if (res.ok) showToast('✅ Configuración de eventos guardada')
+      else showToast('Error al guardar eventos', true)
+    } catch (e) {
+      showToast('Error de conexión', true)
+    } finally {
+      setSavingEvents(false)
+    }
+  }
+
+  const updateEventField = (event, field, value) => {
+    setEventsConfig(prev => ({ ...prev, [event]: { ...prev[event], [field]: value } }))
+  }
 
   const logEvent = (text, type = 'info') => {
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
@@ -656,20 +692,74 @@ export default function Admin() {
                   </button>
                 </div>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.4rem', marginBottom: '1.5rem' }}>
-                  Configura acciones automáticas cada vez que alguien comparta tu transmisión de TikTok Live.
+                  Configura el video y sonido que se reproducirá cuando alguien comparta tu transmisión.
                 </p>
 
                 <div className="setting-section">
-                  <div className="setting-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  {/* Enable toggle */}
+                  <div className="setting-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem', marginBottom: '1.2rem' }}>
                     <div className="setting-info">
-                      <h4>Notificación flotante por compartir</h4>
-                      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Muestra un toast emergente flotante en pantalla felicitando al usuario.</p>
+                      <h4>Activar alerta de compartir</h4>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Reproduce video y notificación en pantalla al recibir un compartir.</p>
                     </div>
                     <label className="switch">
-                      <input type="checkbox" defaultChecked />
+                      <input type="checkbox" checked={eventsConfig.share.enabled} onChange={e => updateEventField('share', 'enabled', e.target.checked)} />
                       <span className="slider"></span>
                     </label>
                   </div>
+
+                  {/* Video selector */}
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label><i className="fa-solid fa-film" style={{ marginRight: '6px', color: 'var(--accent-pink)' }}></i>Video de alerta</label>
+                    <select className="select-input" value={eventsConfig.share.videoUrl} onChange={e => updateEventField('share', 'videoUrl', e.target.value)}>
+                      <option value="gifts/videos/share.mp4">share.mp4 (por defecto)</option>
+                      <option value="gifts/videos/follow.mp4">follow.mp4</option>
+                      {AVAILABLE_VIDEOS.map(v => (
+                        <option key={v} value={`gifts/videos/${v}`}>{v}</option>
+                      ))}
+                    </select>
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <video
+                        key={eventsConfig.share.videoUrl}
+                        src={`/${eventsConfig.share.videoUrl}`}
+                        muted autoPlay loop playsInline
+                        style={{ width: '100%', maxWidth: '280px', borderRadius: '10px', border: '1px solid var(--border-color)' }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Sound selector */}
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label><i className="fa-solid fa-volume-high" style={{ marginRight: '6px', color: 'var(--accent-cyan)' }}></i>Sonido personalizado (opcional)</label>
+                    <input
+                      type="text"
+                      className="text-input"
+                      placeholder="ej. gifts/sounds/fanfare.mp3"
+                      value={eventsConfig.share.soundUrl}
+                      onChange={e => updateEventField('share', 'soundUrl', e.target.value)}
+                    />
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>Deja vacío para usar solo el audio del video.</p>
+                  </div>
+
+                  {/* Message */}
+                  <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                    <label><i className="fa-solid fa-message" style={{ marginRight: '6px', color: 'var(--accent-cyan)' }}></i>Mensaje en pantalla</label>
+                    <input
+                      type="text"
+                      className="text-input"
+                      value={eventsConfig.share.message}
+                      onChange={e => updateEventField('share', 'message', e.target.value)}
+                    />
+                  </div>
+
+                  <button
+                    className="btn btn-accent"
+                    onClick={saveEventsConfig}
+                    disabled={savingEvents}
+                    style={{ width: '100%', height: '42px', background: 'linear-gradient(135deg, var(--accent-pink), #a855f7)' }}
+                  >
+                    <i className="fa-solid fa-floppy-disk"></i> {savingEvents ? 'Guardando...' : 'Guardar Configuración de Compartir'}
+                  </button>
                 </div>
               </div>
             </div>
@@ -686,20 +776,74 @@ export default function Admin() {
                   </button>
                 </div>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '0.4rem', marginBottom: '1.5rem' }}>
-                  Define cómo reacciona tu reproductor en pantalla ante nuevos seguidores.
+                  Configura el video y sonido que se reproducirá cuando alguien comience a seguirte.
                 </p>
 
                 <div className="setting-section">
-                  <div className="setting-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  {/* Enable toggle */}
+                  <div className="setting-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem', marginBottom: '1.2rem' }}>
                     <div className="setting-info">
-                      <h4>Notificación de follows</h4>
-                      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Muestra un Toast elegante con el avatar y el nombre del nuevo seguidor en pantalla.</p>
+                      <h4>Activar alerta de seguidor</h4>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Reproduce video y notificación en pantalla al recibir un nuevo seguidor.</p>
                     </div>
                     <label className="switch">
-                      <input type="checkbox" defaultChecked />
+                      <input type="checkbox" checked={eventsConfig.follow.enabled} onChange={e => updateEventField('follow', 'enabled', e.target.checked)} />
                       <span className="slider"></span>
                     </label>
                   </div>
+
+                  {/* Video selector */}
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label><i className="fa-solid fa-film" style={{ marginRight: '6px', color: 'var(--accent-pink)' }}></i>Video de alerta</label>
+                    <select className="select-input" value={eventsConfig.follow.videoUrl} onChange={e => updateEventField('follow', 'videoUrl', e.target.value)}>
+                      <option value="gifts/videos/follow.mp4">follow.mp4 (por defecto)</option>
+                      <option value="gifts/videos/share.mp4">share.mp4</option>
+                      {AVAILABLE_VIDEOS.map(v => (
+                        <option key={v} value={`gifts/videos/${v}`}>{v}</option>
+                      ))}
+                    </select>
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <video
+                        key={eventsConfig.follow.videoUrl}
+                        src={`/${eventsConfig.follow.videoUrl}`}
+                        muted autoPlay loop playsInline
+                        style={{ width: '100%', maxWidth: '280px', borderRadius: '10px', border: '1px solid var(--border-color)' }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Sound selector */}
+                  <div className="form-group" style={{ marginBottom: '1rem' }}>
+                    <label><i className="fa-solid fa-volume-high" style={{ marginRight: '6px', color: 'var(--accent-cyan)' }}></i>Sonido personalizado (opcional)</label>
+                    <input
+                      type="text"
+                      className="text-input"
+                      placeholder="ej. gifts/sounds/cheer.mp3"
+                      value={eventsConfig.follow.soundUrl}
+                      onChange={e => updateEventField('follow', 'soundUrl', e.target.value)}
+                    />
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.3rem' }}>Deja vacío para usar solo el audio del video.</p>
+                  </div>
+
+                  {/* Message */}
+                  <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                    <label><i className="fa-solid fa-message" style={{ marginRight: '6px', color: 'var(--accent-cyan)' }}></i>Mensaje en pantalla</label>
+                    <input
+                      type="text"
+                      className="text-input"
+                      value={eventsConfig.follow.message}
+                      onChange={e => updateEventField('follow', 'message', e.target.value)}
+                    />
+                  </div>
+
+                  <button
+                    className="btn btn-accent"
+                    onClick={saveEventsConfig}
+                    disabled={savingEvents}
+                    style={{ width: '100%', height: '42px', background: 'linear-gradient(135deg, #22c55e, #10b981)' }}
+                  >
+                    <i className="fa-solid fa-floppy-disk"></i> {savingEvents ? 'Guardando...' : 'Guardar Configuración de Seguidor'}
+                  </button>
                 </div>
               </div>
             </div>
