@@ -120,7 +120,7 @@ if (tiktokConnector.TikTokLiveConnection) {
     process.exit(1);
 }
 
-let connection = new TikTokLiveConnectionClass(tiktokUsername, {});
+let connection = new TikTokLiveConnectionClass(tiktokUsername, { enableExtendedGiftInfo: true });
 let isConnectedToTikTok = false;
 
 // Conectar a la transmisión de TikTok
@@ -162,7 +162,7 @@ function reconnectTikTok(newUsername) {
     }
     
     tiktokUsername = newUsername;
-    connection = new TikTokLiveConnectionClass(newUsername, {});
+    connection = new TikTokLiveConnectionClass(newUsername, { enableExtendedGiftInfo: true });
     bindConnectionEvents();
     connectToTikTok();
 }
@@ -171,24 +171,60 @@ function bindConnectionEvents() {
     // Escuchar eventos de TikTok y retransmitirlos por Socket.io
     connection.on('chat', data => {
         const user = data.user || data;
+        const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
+        const nickname = user.nickname || data.nickname || username;
         io.emit('chat', {
-            username: user.uniqueId,
-            nickname: user.nickname,
+            username: username,
+            nickname: nickname,
             comment: data.comment
         });
     });
 
     connection.on('gift', data => {
+        if (!data) return;
         const user = data.user || data;
+        const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
+        const nickname = user.nickname || data.nickname || username;
+        
+        let profilePictureUrl = '';
+        if (user.avatarThumb && Array.isArray(user.avatarThumb.urlList)) {
+            profilePictureUrl = user.avatarThumb.urlList[0];
+        } else if (user.profilePictureUrl) {
+            profilePictureUrl = user.profilePictureUrl;
+        }
+
+        let giftName = data.giftName || data.gift?.name || data.gift?.describe;
+        const giftId = data.giftId || data.gift?.id;
+
+        // Catálogo de respaldo para los IDs de regalos más comunes configurados por el usuario
+        if (!giftName && giftId) {
+            const giftCatalog = {
+                5655: 'Rose',
+                5827: 'Ice Cream Cone',
+                5269: 'TikTok',
+                5585: 'Heart',
+                6059: 'Wink wink',
+                6093: 'Glow Stick',
+                5487: 'Pop',
+                6054: 'Oldies',
+                6120: 'Love you so much'
+            };
+            giftName = giftCatalog[giftId];
+        }
+
+        if (!giftName) {
+            giftName = giftId ? `gift_id_${giftId}` : 'regalo_desconocido';
+        }
+
         const repeatCount = data.repeatCount || 1;
-        console.log(`🎁 [REGALO] ${user.uniqueId} envió "${data.giftName}" x${repeatCount}`);
+        console.log(`🎁 [REGALO] @${username} (${nickname}) envió "${giftName}" x${repeatCount}`);
 
         io.emit('gift', {
-            username: user.uniqueId,
-            nickname: user.nickname,
-            profilePictureUrl: user.profilePictureUrl,
-            giftName: data.giftName,
-            giftId: data.giftId,
+            username: username,
+            nickname: nickname,
+            profilePictureUrl: profilePictureUrl,
+            giftName: giftName,
+            giftId: giftId,
             repeatCount: repeatCount,
             timestamp: Date.now()
         });
@@ -196,29 +232,35 @@ function bindConnectionEvents() {
 
     connection.on('follow', data => {
         const user = data.user || data;
-        console.log(`👤 [SEGUIDOR] ${user.uniqueId} te comenzó a seguir!`);
+        const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
+        const nickname = user.nickname || data.nickname || username;
+        console.log(`👤 [SEGUIDOR] @${username} te comenzó a seguir!`);
         io.emit('follow', {
-            username: user.uniqueId,
-            nickname: user.nickname
+            username: username,
+            nickname: nickname
         });
     });
 
     connection.on('share', data => {
         const user = data.user || data;
-        console.log(`🔗 [COMPARTIDO] ${user.uniqueId} compartió el directo!`);
+        const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
+        const nickname = user.nickname || data.nickname || username;
+        console.log(`🔗 [COMPARTIDO] @${username} compartió el directo!`);
         io.emit('share', {
-            username: user.uniqueId,
-            nickname: user.nickname
+            username: username,
+            nickname: nickname
         });
     });
 
     connection.on('like', data => {
         const user = data.user || data;
+        const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
+        const nickname = user.nickname || data.nickname || username;
         // Solo enviar eventos significativos de likes para no saturar la red
         if (data.likeCount && data.likeCount % 100 === 0) {
             io.emit('like', {
-                username: user.uniqueId,
-                nickname: user.nickname,
+                username: username,
+                nickname: nickname,
                 totalLikes: data.totalLikeCount
             });
         }
