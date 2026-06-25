@@ -122,23 +122,48 @@ if (tiktokConnector.TikTokLiveConnection) {
 
 let connection = new TikTokLiveConnectionClass(tiktokUsername, { enableExtendedGiftInfo: false });
 let isConnectedToTikTok = false;
+let isConnecting = false;
+let connectTimeout = null;
 
 // Conectar a la transmisión de TikTok
 function connectToTikTok() {
+    if (isConnectedToTikTok) {
+        console.log('Ya conectado, omitiendo intento de conexión.');
+        return;
+    }
+    if (isConnecting) {
+        console.log('Un intento de conexión ya está en curso, omitiendo.');
+        return;
+    }
     if (!tiktokUsername || tiktokUsername === 'tu_usuario_de_tiktok') {
         console.warn('\n⚠️  ¡ATENCIÓN! Debes configurar tu nombre de usuario de TikTok en "config.json" para conectarte en vivo.\n');
         return;
     }
 
+    isConnecting = true;
     console.log(`Intentando conectar a TikTok Live de @${tiktokUsername}...`);
     connection.connect().then(state => {
         console.log(`✅ ¡Conectado con éxito a la transmisión de @${tiktokUsername}! (Room ID: ${state.roomId})`);
         isConnectedToTikTok = true;
+        isConnecting = false;
         io.emit('server_status', {
             connected: true,
             tiktokUsername: tiktokUsername
         });
     }).catch(err => {
+        isConnecting = false;
+        
+        // Si el error indica que ya está conectado, resolverlo favorablemente
+        if (err.message && err.message.includes('Already connected')) {
+            console.log('El cliente de TikTok ya estaba conectado. Sincronizando estado local a conectado.');
+            isConnectedToTikTok = true;
+            io.emit('server_status', {
+                connected: true,
+                tiktokUsername: tiktokUsername
+            });
+            return;
+        }
+
         console.error(`❌ Error al conectar a TikTok Live. ¿El usuario @${tiktokUsername} está en vivo actualmente?`);
         console.error('Detalle del error:', err.message || err);
         isConnectedToTikTok = false;
@@ -146,13 +171,21 @@ function connectToTikTok() {
             connected: false,
             tiktokUsername: tiktokUsername
         });
+        
         console.log('Reintentando conexión en 15 segundos...');
-        setTimeout(connectToTikTok, 15000);
+        if (connectTimeout) clearTimeout(connectTimeout);
+        connectTimeout = setTimeout(connectToTikTok, 15000);
     });
 }
 
 function reconnectTikTok(newUsername) {
     console.log(`🔄 Re-conectando a TikTok Live para el nuevo usuario: @${newUsername}...`);
+    
+    if (connectTimeout) {
+        clearTimeout(connectTimeout);
+        connectTimeout = null;
+    }
+    
     try {
         if (connection) {
             connection.disconnect();
@@ -161,15 +194,17 @@ function reconnectTikTok(newUsername) {
         console.warn('Error al detener conexión previa:', e);
     }
     
+    isConnectedToTikTok = false;
+    isConnecting = false;
     tiktokUsername = newUsername;
     connection = new TikTokLiveConnectionClass(newUsername, { enableExtendedGiftInfo: false });
-    bindConnectionEvents();
+    bindConnectionEvents(connection);
     connectToTikTok();
 }
 
-function bindConnectionEvents() {
+function bindConnectionEvents(connInstance) {
     // Escuchar eventos de TikTok y retransmitirlos por Socket.io
-    connection.on('chat', data => {
+    connInstance.on('chat', data => {
         const user = data.user || data;
         const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
         const nickname = user.nickname || data.nickname || username;
@@ -180,7 +215,7 @@ function bindConnectionEvents() {
         });
     });
 
-    connection.on('gift', data => {
+    connInstance.on('gift', data => {
         if (!data) return;
         const user = data.user || data;
         const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
@@ -230,7 +265,7 @@ function bindConnectionEvents() {
         });
     });
 
-    connection.on('follow', data => {
+    connInstance.on('follow', data => {
         const user = data.user || data;
         const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
         const nickname = user.nickname || data.nickname || username;
@@ -241,7 +276,7 @@ function bindConnectionEvents() {
         });
     });
 
-    connection.on('share', data => {
+    connInstance.on('share', data => {
         const user = data.user || data;
         const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
         const nickname = user.nickname || data.nickname || username;
@@ -252,7 +287,7 @@ function bindConnectionEvents() {
         });
     });
 
-    connection.on('like', data => {
+    connInstance.on('like', data => {
         const user = data.user || data;
         const username = user.displayId || user.uniqueId || data.uniqueId || 'usuario_anonimo';
         const nickname = user.nickname || data.nickname || username;
@@ -266,19 +301,24 @@ function bindConnectionEvents() {
         }
     });
 
-    connection.on('disconnected', () => {
+    connInstance.on('disconnected', () => {
+        if (connInstance !== connection) {
+            console.log('Ignorando evento disconnected de una conexión antigua.');
+            return;
+        }
         console.warn('⚠️ Se perdió la conexión con TikTok Live. Intentando reconectar...');
         isConnectedToTikTok = false;
         io.emit('server_status', {
             connected: false,
             tiktokUsername: tiktokUsername
         });
-        setTimeout(connectToTikTok, 10000);
+        if (connectTimeout) clearTimeout(connectTimeout);
+        connectTimeout = setTimeout(connectToTikTok, 10000);
     });
 }
 
 // Inicializar eventos
-bindConnectionEvents();
+bindConnectionEvents(connection);
 
 // Conexión de clientes Web (nuestra página index.html)
 io.on('connection', (socket) => {
